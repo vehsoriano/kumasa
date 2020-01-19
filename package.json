@@ -1,0 +1,19 @@
+{
+  "name": "kumasa-api",
+  "version": "1.0.0",
+  "description": "kumasa-api",
+  "main": "server.js",
+  "scripts": {
+    "client": "npm start --prefix client",
+    "dev": "concurrently \"npm run client\"",
+    "heroku-postbuild": "cd client && npm install && npm run build"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "concurrently": "^5.0.2"
+  },
+  "engines": {
+    "node": "12.13.1"
+  }
+}
