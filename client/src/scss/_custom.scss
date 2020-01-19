@@ -1,0 +1,156 @@
+// Here you can add other styles
+.icon-actions {
+  width: 20px;
+  height: 20px;
+
+  path {
+    transition: all .3s ease;
+  }
+
+  &:hover {
+    path {
+      fill: $blue;
+      stroke: $blue;
+    }
+  }
+}
+
+.ReactTable {
+  border: none !important;
+
+  .rt-table {
+    border-radius: 6px;
+
+    box-shadow: 0px 0px 10px 4px rgba(0, 0, 0, 0.05);
+  }
+
+  .rt-tr {
+    .rt-th div {
+      // font-family: $font-gotham;
+      font-weight: 500;
+      font-size: 14px;
+      text-transform: uppercase;
+    }
+
+    &.-odd {
+      background-color: #f4f4f4;
+    }
+  }
+
+  .rt-thead {
+    color: #286df9;
+
+    background-color: #e9f0ff;
+
+    border-bottom: 1px solid #dde4f2;
+  }
+  
+  .rt-td {
+    // font-family: $font-gotham;
+    font-weight: 200;
+    font-size: 14px;
+  }
+
+  .rt-th,
+  .rt-td {
+    padding: 15px !important;
+    
+    white-space: normal !important
+  }
+
+  .rt-td {
+
+    &.table-point-plus:before {
+      content: '+';
+      position: relative;
+      margin-right: 3px  
+    }
+
+    &.table-amount-peso:before {
+      content: 'P';
+      position: relative;
+      margin-right: 3px  
+    }
+
+    .table-status-active,
+    .table-status-inactive {
+      position: relative;
+
+      &:after {
+        content: '';
+
+        position: absolute;
+        top: calc(50% + 2px);
+        right: -18px;
+
+        width: 9px;
+        height: 9px;
+
+        border-radius: 50%;
+
+        transform: translateY(-50%);
+      }
+    }
+
+    .table-status-active:after {
+      background-color: green;
+    }
+
+    .table-status-inactive:after {
+      background-color: red;
+    }
+  }
+
+  .rt-th {
+    display: flex;
+    align-items: center;
+
+    text-align: left;
+  }
+
+  .rt-tr-group {
+    background-color: white;
+  }
+
+  .rt-resizable-header-content {
+    text-align: left;
+  }  
+
+  .button-wrapper {
+    display: flex;
+    flex-wrap: wrap;
+  }
+
+  .button-holder {
+    width: auto;
+  }
+
+  .icon-link {
+    display: block;
+    padding: 0 6px;
+    height: 100%;
+  }
+
+  .btn-icon {
+    background: none;
+    border: none;
+    outline: none;
+
+    cursor: pointer;
+  }
+}
+
+.modals {
+  .holder-details {
+    display: flex;
+    flex-wrap: wrap;
+    
+    .holder-key {
+      width: 40%;
+    }
+
+    .holder-value {
+      width: 60%;
+    }
+  }
+}
