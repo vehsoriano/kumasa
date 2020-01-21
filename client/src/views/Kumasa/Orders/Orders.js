@@ -11,6 +11,9 @@ const userData = [
   {
     id: 1,
     order_number: 'KUMASAX0001',
+    order_total: 250,
+    order_branch: 'Kumasa001',
+
     first_name: 'John',
     last_name: 'Doe',
     phone_number: '09200000000',
@@ -19,11 +22,14 @@ const userData = [
     city: 'Angeles City',
     province: 'Pampanga',
     order_date: 'Jan 20, 2020',
-    status: false,
+    status: 'Delivered',
   },
   {
     id: 2,
     order_number: 'KUMASAX0002',
+    order_total: 250,
+    order_branch: 'Kumasa002',
+
     first_name: 'Jane',
     last_name: 'Doe',
     phone_number: '09211111111',
@@ -32,18 +38,18 @@ const userData = [
     city: 'Angeles City',
     province: 'Pampanga',
     order_date: 'Jan 21, 2020',
-    status: true,
+    status: 'Delivered',
   },
 ]
 
 function Orders() {
   const [modalState, setModalState] = useState(false);  
-  const [data, setData] = useState([]);
-  const [currentOrder, setCurrentOrder] = useState([]);
+  const [currentOrder, setCurrentOrder] = useState([]); // ID for current view
+  const [orderData, setOrderData] = useState([]);       // All User Order Data
   
 
   useEffect(() => {
-    setData(userData)
+    setOrderData(userData)
   }, [])
 
   console.log(currentOrder)
@@ -56,8 +62,6 @@ function Orders() {
     setModalState(false);
     setCurrentOrder('')
   };
-
-  
 
   const columns = [
     {
@@ -74,8 +78,8 @@ function Orders() {
       Header: 'Email',
       accessor: 'email'
     }, {
-      Header: 'Phone Number',
-      accessor: 'phone_number'
+      Header: 'Order Total',
+      accessor: 'order_total'
     }, {
       Header: 'Status',
       id: 'status',
@@ -86,7 +90,7 @@ function Orders() {
       // filterable: false,
       Cell: row => (
         <div className='button-wrapper'>
-          {/* <div className='button-holder'>
+          <div className='button-holder'>
             <button
               className='btn-icon'
               onClick={() => {
@@ -94,13 +98,13 @@ function Orders() {
               }}
             >
               <span className='icon-holder'>
-                <IconEdit className='icon-actions' data-tip data-for='edit' />
+                <span className='icon-location-pin' data-tip data-for='edit' />
               </span>
             </button>
             <ReactTooltip id='edit' type='warning' effect='solid'>
-              <span>Edit</span>
+              <span>Track</span>
             </ReactTooltip>
-          </div> */}
+          </div>
           <div className='button-holder'>
             <button
               className='btn-icon'
@@ -114,11 +118,15 @@ function Orders() {
               }}
             >
               <span className='icon-holder'>
-                <IconDelete
-                  className='icon-actions'
+                <span 
+                  className="fa fa-eye"
                   data-tip
                   data-for='view'
-                />
+                ></span>
+                {/* <IconDelete
+                  className='icon-actions'
+                  
+                /> */}
               </span>
             </button>
             <ReactTooltip id='view' type='warning' effect='solid'>
@@ -130,8 +138,31 @@ function Orders() {
     }
   ]
 
+  const branchDetails = [
+    {
+      branch_id: 'Kumasa001',
+      branch: 'Mcdonalds Angeles',
+      contact: '8001',
+      address: 'Angeles City',
+    }, 
+    {
+      branch_id: 'Kumasa002',
+      branch: 'Jollibee Angeles',
+      contact: '87000',
+      address: 'Sto Rosario St. Angeles City',
+    },
+    {
+      branch_id: 'Kumasa003',
+      branch: 'KFC Angeles',
+      contact: '1111',
+      address: 'AC',
+    },
+  ]
+
   const {
     order_number,
+    order_total,
+    order_branch,
     first_name,
     last_name,
     phone_number,
@@ -145,7 +176,7 @@ function Orders() {
   return (
     <React.Fragment>
       <CustomTable
-        data={data}
+        data={orderData}
         columns={columns}
       />
       <Modal 
@@ -174,18 +205,27 @@ function Orders() {
           </div>
 
           <br/><h4>Branch Details</h4><hr/>
-          <div className="holder-details">
-            <div className="holder-key">Name:</div>
-            <div className="holder-value">Mcdonalds Angeles</div>
-          </div>
-          <div className="holder-details">
-            <div className="holder-key">Contact:</div>
-            <div className="holder-value">87000</div>
-          </div>
-          <div className="holder-details">
-            <div className="holder-key">Address:</div>
-            <div className="holder-value">Sto Rosario St. Angeles City</div>
-          </div>
+          {
+            branchDetails.filter(x => x.branch_id === order_branch).map(x => {
+              return (
+                <div key={x.branch_id}>
+                  <div className="holder-details">
+                    <div className="holder-key">Name:</div>
+                    <div className="holder-value">{x.branch}</div>
+                  </div>
+                  <div className="holder-details">
+                    <div className="holder-key">Contact:</div>
+                    <div className="holder-value">{x.contact}</div>
+                  </div>
+                  <div className="holder-details">
+                    <div className="holder-key">Address:</div>
+                    <div className="holder-value">{x.address}</div>
+                  </div>
+                </div>
+              )
+            })
+          }
+          
 
           <br/><h4>Order Details</h4><hr/>
           <div className="holder-details">

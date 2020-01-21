@@ -5,6 +5,7 @@ import ReactTooltip from 'react-tooltip';
 import { ReactComponent as IconDelete } from '../../../assets/img/icon-delete.svg';
 import { ReactComponent as IconEdit } from '../../../assets/img/icon-edit.svg';
 
+
 const data = [
   { 
     rider_id: 'KUMASA_RIDER01',
@@ -169,13 +170,25 @@ const columns = [
   }
 ]
 
-function Riders() {
+function Affiliates() {
   return (
+    <>
     <Table
       data={data}
       columns={columns}
     />
+    <br></br><br></br>
+    <Table
+      data={data}
+      columns={columns}
+    />
+    <br></br><br></br>
+    <Table
+      data={data}
+      columns={columns}
+    />
+    </>
   )
 }
 
-export default Riders  
+export default Affiliates
