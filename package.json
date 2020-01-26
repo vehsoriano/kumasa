@@ -1,45 +1,28 @@
 {
-  "name": "kumasa-api",
+  "name": "devconnector",
   "version": "1.0.0",
-  "description": "kumasa-api",
+  "description": "Social Network for Developers",
   "main": "server.js",
   "scripts": {
     "start": "node server",
     "server": "nodemon server",
     "client": "npm start --prefix client",
-    "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "heroku-postbuild": "cd client && npm install && npm install && npm run build"
+    "dev": "concurrently \"npm run server\" \"npm run client\""
   },
-  "author": "",
+  "author": "Je",
   "license": "ISC",
   "dependencies": {
-    "@babel/cli": "^7.7.7",
-    "@babel/core": "^7.7.7",
-    "@babel/plugin-transform-runtime": "^7.7.6",
-    "@babel/preset-env": "^7.7.7",
-    "@babel/preset-es2015": "^7.0.0-beta.53",
-    "@babel/runtime": "^7.7.7",
-    "babel-minify": "^0.5.1",
-    "babel-runtime": "^5.3.0",
     "bcryptjs": "^2.4.3",
-    "concurrently": "^5.0.2",
     "config": "^3.2.4",
-    "cors": "^2.8.5",
-    "dotenv": "^8.2.0",
     "express": "^4.17.1",
-    "express-fileupload": "^1.1.6",
     "express-validator": "^6.3.0",
     "gravatar": "^1.8.0",
     "jsonwebtoken": "^8.5.1",
-    "moment": "^2.24.0",
     "mongoose": "^5.7.12",
-    "nexmo": "^2.5.3",
-    "nodemon": "^2.0.1",
-    "paymongo": "^0.1.16",
-    "request": "^2.88.0",
-    "shortid": "^2.2.15"
+    "request": "^2.88.0"
   },
-  "engines": {
-    "node": "10.15.1"
+  "devDependencies": {
+    "concurrently": "^5.0.0",
+    "nodemon": "^2.0.1"
   }
 }

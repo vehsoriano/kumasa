@@ -1,131 +1,128 @@
-import React from 'react'
+import React, { useState, useEffect } from "react";
+import axios from "axios";
 
-import Table from '../../../containers/Table'
-import ReactTooltip from 'react-tooltip';
-import { ReactComponent as IconDelete } from '../../../assets/img/icon-delete.svg';
-import { ReactComponent as IconEdit } from '../../../assets/img/icon-edit.svg';
+import Table from "../../../containers/Table";
+import ReactTooltip from "react-tooltip";
+import { ReactComponent as IconDelete } from "../../../assets/img/icon-delete.svg";
+import { ReactComponent as IconEdit } from "../../../assets/img/icon-edit.svg";
 
 const data = [
-  { 
-    rider_id: 'KUMASA_RIDER01',
-    name: 'Tanner Linsley',
-    email: 'tanner@linsley@gmail.com',
-    phone_number: '09200000000',
+  {
+    rider_id: "KUMASA_RIDER01",
+    name: "Tanner Linsley",
+    email: "tanner@linsley@gmail.com",
+    phone_number: "09200000000",
     status: false,
-    age: 16,
+    age: 16
   },
   {
-    rider_id: 'KUMASA_RIDER02',
-    name: 'Tanner Linsley',
-    email: 'tanner@linsley@gmail.com',
-    phone_number: '09200000000',
+    rider_id: "KUMASA_RIDER02",
+    name: "Tanner Linsley",
+    email: "tanner@linsley@gmail.com",
+    phone_number: "09200000000",
     status: true,
-    age: 26,
+    age: 26
   }
-]
+];
 
 const columns = [
   {
-    Header: 'Rider ID',
-    accessor: 'rider_id' // String-based value accessors!
+    Header: "Rider ID",
+    accessor: "rider_id" // String-based value accessors!
   },
   {
-    Header: 'Name',
-    accessor: 'name' // String-based value accessors!
-  }, {
-    Header: 'Email',
-    accessor: 'email'
-  }, {
-    Header: 'Phone Number',
-    accessor: 'phone_number'
-  }, {
-    Header: 'Status',
-    id: 'status',
+    Header: "Name",
+    accessor: "name" // String-based value accessors!
+  },
+  {
+    Header: "Email",
+    accessor: "email"
+  },
+  {
+    Header: "Phone Number",
+    accessor: "phone_number"
+  },
+  {
+    Header: "Status",
+    id: "status",
     accessor: d => d.status.toString(),
     Cell: status => (
-      <div className='active-holder'>
-        {status.original.status ? (
-          <span className='table-status-active'>Online</span>
+      <div className="active-holder">
+        {status.original.status == "online" ? (
+          <span className="table-status-active">Online</span>
         ) : (
-          <span className='table-status-inactive'>Offline</span>
+          <span className="table-status-inactive">Offline</span>
         )}
       </div>
     )
-  }, {
-    Header: 'Age',
-    accessor: 'age',
-    Cell: props => <span className='number'>{props.value}</span> // Custom cell components!
-  }, {
-    Header: 'Actions',
+  },
+  {
+    Header: "Age",
+    accessor: "age",
+    Cell: props => <span className="number">{props.value}</span> // Custom cell components!
+  },
+  {
+    Header: "Actions",
     sortable: false,
     // filterable: false,
     Cell: row => (
-      <div className='button-wrapper'>
-        <div className='button-holder'>
+      <div className="button-wrapper">
+        <div className="button-holder">
           <button
-            className='btn-icon'
+            className="btn-icon"
             onClick={() => {
-            //   handleShowEdit();
-            //   // getData()
-
-            //   /*
-            //    * Get data from user datas
-            //    */
-
-            //   let datas = [...userData];
-            //   console.log({ USERS: datas[row.index] });
-            //   let status = datas[row.index].user_status.toString();
-            //   let number = datas[row.index].user_phone.toString();
-
-            //   /*
-            //    * Initialize CurrentID
-            //    */
-
-            //   setCurrentEdit_ID(datas[row.index]._id);
-
-            //   /*
-            //    * Add shorthand notation value
-            //    */
-
-            //   const {
-            //     user_role,
-            //     user_first_name,
-            //     user_last_name,
-            //     // user_phone,
-            //     user_email,
-            //     // user_password
-            //     // user_status
-            //   } = datas[row.index];
-
-            //   /*
-            //    * Set User Data value to Current Input Fields
-            //    */
-            //   values.role = user_role;
-            //   values.first_name = user_first_name;
-            //   values.last_name = user_last_name;
-            //   values.phone_number = number;
-            //   values.email = user_email;
-            //   values.password = '';
-            //   values.status = status;
+              //   handleShowEdit();
+              //   // getData()
+              //   /*
+              //    * Get data from user datas
+              //    */
+              //   let datas = [...userData];
+              //   console.log({ USERS: datas[row.index] });
+              //   let status = datas[row.index].user_status.toString();
+              //   let number = datas[row.index].user_phone.toString();
+              //   /*
+              //    * Initialize CurrentID
+              //    */
+              //   setCurrentEdit_ID(datas[row.index]._id);
+              //   /*
+              //    * Add shorthand notation value
+              //    */
+              //   const {
+              //     user_role,
+              //     user_first_name,
+              //     user_last_name,
+              //     // user_phone,
+              //     user_email,
+              //     // user_password
+              //     // user_status
+              //   } = datas[row.index];
+              //   /*
+              //    * Set User Data value to Current Input Fields
+              //    */
+              //   values.role = user_role;
+              //   values.first_name = user_first_name;
+              //   values.last_name = user_last_name;
+              //   values.phone_number = number;
+              //   values.email = user_email;
+              //   values.password = '';
+              //   values.status = status;
             }}
           >
-            <span className='icon-holder'>
-              <IconEdit className='icon-actions' data-tip data-for='edit' />
+            <span className="icon-holder">
+              <IconEdit className="icon-actions" data-tip data-for="edit" />
             </span>
           </button>
-          <ReactTooltip id='edit' type='warning' effect='solid'>
+          <ReactTooltip id="edit" type="warning" effect="solid">
             <span>Edit</span>
           </ReactTooltip>
         </div>
-        <div className='button-holder'>
+        <div className="button-holder">
           <button
-            className='btn-icon'
+            className="btn-icon"
             onClick={() => {
               // let datas = [...userData];
-
               // console.log(datas[row.index]._id);
               // const deleteID = datas[row.index]._id;
-
               // Swal.fire({
               //   title: 'Are you sure?',
               //   text: "You won't be able to revert this!",
@@ -152,30 +149,40 @@ const columns = [
               // });
             }}
           >
-            <span className='icon-holder'>
-              <IconDelete
-                className='icon-actions'
-                data-tip
-                data-for='delete'
-              />
+            <span className="icon-holder">
+              <IconDelete className="icon-actions" data-tip data-for="delete" />
             </span>
           </button>
-          <ReactTooltip id='delete' type='warning' effect='solid'>
+          <ReactTooltip id="delete" type="warning" effect="solid">
             <span>Delete</span>
           </ReactTooltip>
         </div>
       </div>
     )
   }
-]
+];
 
 function Riders() {
-  return (
-    <Table
-      data={data}
-      columns={columns}
-    />
-  )
+  const [transactionData, setTransactionData] = useState([]);
+  function getData() {
+    // console.log("yes");
+    axios
+      .get("api/users/riders")
+      .then(res => {
+        // console.log(res.data)
+        setTransactionData(res.data);
+        // setLoader(true)
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+  useEffect(() => {
+    getData();
+  }, []);
+  console.log(transactionData);
+
+  return <Table data={transactionData} columns={columns} />;
 }
 
-export default Riders  
+export default Riders;
