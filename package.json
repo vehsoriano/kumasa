@@ -20,13 +20,11 @@
     "gravatar": "^1.8.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.7.12",
-    "request": "^2.88.0"
-  },
-  "devDependencies": {
+    "request": "^2.88.0",    
     "concurrently": "^5.0.0",
     "nodemon": "^2.0.1"
   },
   "engines": {
-    "node": "12.13.1"
+    "node": "10.15.1"
   }
 }
