@@ -17,7 +17,7 @@ const Page500 = React.lazy(() => import('./views/Pages/Page500'));
 
 function App() {
   return (
-    <HashRouter>
+    <HashRouter basename='/'>
       <React.Suspense fallback={loading()}>
         
         <Switch>
