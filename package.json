@@ -7,7 +7,8 @@
     "start": "node server",
     "server": "nodemon server",
     "client": "npm start --prefix client",
-    "dev": "concurrently \"npm run server\" \"npm run client\""
+    "dev": "concurrently \"npm run server\" \"npm run client\"",
+    "heroku-postbuild": "cd client && npm install && npm install && npm run build"
   },
   "author": "Je",
   "license": "ISC",
@@ -24,5 +25,8 @@
   "devDependencies": {
     "concurrently": "^5.0.0",
     "nodemon": "^2.0.1"
+  },
+  "engines": {
+    "node": "12.13.1"
   }
 }
