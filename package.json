@@ -8,7 +8,7 @@
     "server": "nodemon server",
     "client": "npm start --prefix client",
     "dev": "concurrently \"npm run server\" \"npm run client\"",
-    "heroku-postbuild": "cd client && yarn install && npm install && yarn run build"
+    "heroku-postbuild": "cd client && npm install && npm install && npm run build"
   },
   "author": "Je",
   "license": "ISC",
