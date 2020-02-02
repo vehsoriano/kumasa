@@ -32,7 +32,7 @@ function DefaultLayout({...props}) {
   function signOut(e) {
     e.preventDefault()
     localStorage.removeItem('token')
-    props.history.push('/login')
+    props.history.push('/')
   }
 
   const key = localStorage.getItem('token')
@@ -92,7 +92,7 @@ function DefaultLayout({...props}) {
          </AppFooter> */}
        </div>
      ) : (
-       <Redirect to="/login" />
+       <Redirect to="/" />
      )}
     </>
   );

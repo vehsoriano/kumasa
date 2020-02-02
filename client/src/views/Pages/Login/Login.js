@@ -19,7 +19,7 @@ function Login({...props}) {
 
     if (value.username == 'admin' && value.password == 'admin') {
       localStorage.setItem('token', 'token123')
-      props.history.push('/')
+      props.history.push('/dashboard')
     }
   }
 
@@ -39,7 +39,7 @@ function Login({...props}) {
     <>
       {
         localStorage.getItem('token') ? (
-          <Redirect to="/" />
+          <Redirect to="/dashboard" />
         ) : (
           <div className="app flex-row align-items-center">
             <Container>
