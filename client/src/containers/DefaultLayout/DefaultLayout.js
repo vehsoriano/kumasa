@@ -74,7 +74,7 @@ function DefaultLayout({...props}) {
                          )} />
                      ) : (null);
                    })}
-                   {/* <Redirect from="/" to="/" /> */}
+                   <Redirect from="/" to="/" />
                  </Switch>
                </Suspense>
              </Container>
