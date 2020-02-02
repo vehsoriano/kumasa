@@ -8,7 +8,7 @@ function Table({data, columns}) {
       data={data}
       columns={columns}
       showPagination={true}
-      minRows={0}
+      minRows={5}
     />
   )
 }
