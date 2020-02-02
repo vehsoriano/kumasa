@@ -19,7 +19,7 @@ function Login({...props}) {
 
     if (value.username == 'admin' && value.password == 'admin') {
       localStorage.setItem('token', 'token123')
-      props.history.push('/dashboard')
+      props.history.push('/')
     }
   }
 
@@ -39,7 +39,7 @@ function Login({...props}) {
     <>
       {
         localStorage.getItem('token') ? (
-          <Redirect to="/dashboard" />
+          <Redirect to="/" />
         ) : (
           <div className="app flex-row align-items-center">
             <Container>
@@ -79,9 +79,9 @@ function Login({...props}) {
                             <Col xs="6">
                               <Button color="primary" className="px-4" type="submit">Login</Button>
                             </Col>
-                            <Col xs="6" className="text-right">
+                            {/* <Col xs="6" className="text-right">
                               <Button color="link" className="px-0">Forgot password?</Button>
-                            </Col>
+                            </Col> */}
                           </Row>
                         </Form>
                       </CardBody>
