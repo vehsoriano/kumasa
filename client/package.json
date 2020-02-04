@@ -1,11 +1,7 @@
 {
+  "homepage": "https://kumasa-admin.herokuapp.com/",
   "name": "kumasa-admin-app",
-  "version": "2.6.0",
-  "description": "CoreUI React Open Source Bootstrap 4 Admin Template",
-  "author": "Łukasz Holeczek",
-  "homepage": "https://coreui.io",
-  "copyright": "Copyright 2017-2019 creativeLabs Łukasz Holeczek",
-  "license": "MIT",
+  "version": "1.0.0",
   "private": true,
   "dependencies": {
     "axios": "^0.19.0",
@@ -44,9 +40,6 @@
     "test:debug": "react-scripts --inspect-brk test --runInBand",
     "eject": "react-scripts eject"
   },
-  "bugs": {
-    "url": "https://github.com/coreui/coreui-free-react-admin-template/issues"
-  },
   "eslintConfig": {
     "extends": "react-app"
   },
@@ -63,10 +56,6 @@
       "!src/serviceWorker.js",
       "!src/polyfill.js"
     ]
-  },
-  "engines": {
-    "node": ">=8.10",
-    "npm": ">=6"
   },
   "proxy": "http://localhost:5000/"
 }

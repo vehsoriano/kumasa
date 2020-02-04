@@ -7,6 +7,9 @@ const app = express();
 //Connect Database
 connectDB();
 
+const root = require("path").join(__dirname, "client", "build");
+app.use(express.static(root));
+
 // Init Middleware
 app.use(express.json({ extended: false }));
 
@@ -21,4 +24,10 @@ app.use("/api/order", require("./routes/api/order"));
 
 const PORT = process.env.PORT || 5000;
 
-app.listen(PORT, () => console.log(`Server started on port ${PORT}`));
+app.get("*", (req, res) => {
+  res.sendFile("index.html", { root });
+});
+
+app.listen(PORT, function(){
+  console.log("Express server listening on port %d in %s mode", this.address().port, app.settings.env);
+});

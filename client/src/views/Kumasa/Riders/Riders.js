@@ -72,6 +72,7 @@ function Riders() {
   useEffect(() => {
     getData();
   }, []);
+  
   const handleShowAdd = () => {
     setModalAddSate(true);
   };
