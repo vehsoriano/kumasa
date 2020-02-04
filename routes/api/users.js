@@ -139,6 +139,16 @@ router.get("/riders", async (req, res) => {
         rider_user_id: user[index]._id
       });
       data.push({
+        // indexes for user
+        id: user[index]._id,
+        first_name: user[index].first_name,
+        middle_name: user[index].middle_name,
+        last_name: user[index].last_name,
+        address: user[index].address,
+        city: user[index].city,
+        province: user[index].province,
+
+        // indexes for rider profile
         rider_id: rider.rider_id,
         name: user[index].first_name + " " + user[index].last_name,
         email: user[index].email,
