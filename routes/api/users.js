@@ -7,7 +7,7 @@ const { check, validationResult } = require("express-validator");
 
 // Model
 const User = require("../../models/User");
-const RiderProfile = require("../../models/RidersProfile");
+const RidersProfile = require("../../models/RidersProfile");
 
 // @route  POST api/users
 // @desc   Register user
@@ -81,9 +81,9 @@ router.post(
 
       // if the role is rider save the profile
       if (role == "rider") {
-        const ridersCount = await RiderProfile.find();
+        const ridersCount = await RidersProfile.find();
         const kumasaId = "KUMASA_RIDER" + (ridersCount.length + 1);
-        rider = new RiderProfile({
+        rider = new RidersProfile({
           rider_user_id: user._id,
           rider_id: kumasaId,
           age,
@@ -116,6 +116,74 @@ router.post(
     }
   }
 );
+// update user
+router.put("/update/:user_id", async (req, res) => {
+  const {
+    first_name,
+    middle_name,
+    last_name,
+    phone_number,
+    age,
+    email,
+    address,
+    city,
+    province,
+    role,
+    password
+  } = req.body
+  try {
+    // update user
+    const user = await User.findById(req.params.user_id);
+    user.first_name = first_name;
+    user.middle_name = middle_name;
+    user.last_name = last_name;
+    user.phone_number = phone_number;
+    user.email = email;
+    user.address = address;
+    user.city = city;
+    user.province = province;
+    user.role = role;
+    if (password) {
+      // encrypt
+      const salt = await bcrypt.genSalt(10);
+      user.password = await bcrypt.hash(password, salt);
+    }
+    
+    user.save();
+    // update riders profile
+    const riders_profile = await RidersProfile.findOne({rider_user_id: req.params.user_id});
+    riders_profile.age = age;
+    riders_profile.save();
+
+    res.json({
+      data:{
+        status: 'success',
+        msg: 'Profile Updated'
+      }
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
+// dlete user
+router.delete("/delete/:user_id", async (req, res) => {
+  try {
+    await User.deleteOne({_id: req.params.user_id});
+    await RidersProfile.deleteOne({rider_user_id: req.params.user_id});
+    res.json({
+      data:{
+        status: 'success',
+        msg: 'User Removed!'
+      }
+    });
+
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
 
 // get all user
 router.get("/", async (req, res) => {
@@ -128,6 +196,8 @@ router.get("/", async (req, res) => {
     res.status(500).send("Server error");
   }
 });
+
+
 
 // get all riders
 router.get("/riders", async (req, res) => {

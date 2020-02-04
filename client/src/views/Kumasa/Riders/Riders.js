@@ -28,6 +28,7 @@ function Riders() {
   const [modalDeleteState, setModalDeleteSate] = useState(false);
   const [modalAddState, setModalAddSate] = useState(false);
   const [tableData, setTableData] = useState([]);
+  const [userID, setUserID] = useState('');
   const [formData, setFormData] = useState({
     first_name: "",
     middle_name: "",
@@ -135,6 +136,57 @@ function Riders() {
         console.log(err);
       });
   };
+
+  // console.log(tableData);
+  const onUpdate = e => {
+    e.preventDefault();
+
+    // console.log("Yey");
+    const req = {
+      first_name,
+      middle_name,
+      last_name,
+      phone_number,
+      age,
+      email,
+      address,
+      city,
+      province,
+      role: "rider",
+      password
+    };
+    // return console.log(req);
+    axios
+      .put(`api/users/update/${userID}`, req)
+      .then(res => {
+        console.log(res.data);
+        getData();
+        setModalEditSate(false);
+        // setTableData(res.data);
+        // setLoader(true)
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+  // console.log(tableData);
+  const onDelete = e => {
+    e.preventDefault();
+
+    // return console.log(req);
+    axios
+      .delete(`api/users/delete/${userID}`)
+      .then(res => {
+        console.log(res.data);
+        getData();
+        setModalDeleteSate(false);
+        // setTableData(res.data);
+        // setLoader(true)
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
   function clearFormData() {
     setFormData({
       first_name: "",
@@ -222,16 +274,8 @@ function Riders() {
                   province,
                   age
                 } = datas[row.index];
-                /*
-                 * Set User Data value to Current Input Fields
-                 */
-                // values.role = user_role;
-                // values.first_name = first_name;
-                // values.last_name = user_last_name;
-                // values.phone_number = number;
-                // values.email = user_email;
-                // values.password = '';
-                // values.status = status;
+            
+                setUserID(id);
                 setFormData({
                   first_name,
                   middle_name,
@@ -258,33 +302,11 @@ function Riders() {
               className="btn-icon"
               onClick={() => {
                 handleShowDelete();
-                // let datas = [...userData];
-                // console.log(datas[row.index]._id);
-                // const deleteID = datas[row.index]._id;
-                // Swal.fire({
-                //   title: 'Are you sure?',
-                //   text: "You won't be able to revert this!",
-                //   icon: 'warning',
-                //   showCancelButton: true,
-                //   confirmButtonColor: '#3085d6',
-                //   cancelButtonColor: '#d33',
-                //   confirmButtonText: 'Yes, delete it!'
-                // }).then(result => {
-                //   if (result.value) {
-                //     axios.delete(`api/users/${deleteID}`).then(response => {
-                //       console.log(response);
-                //       getData();
-                //     });
-                //     let title = 'Deleted!';
-                //     let message = 'User has been deleted successfully!';
-                //     successNotif(title, message);
-                //     // Swal.fire(
-                //     //   'Deleted!',
-                //     //   'User has been deleted successfully!',
-                //     //   'success'
-                //     // )
-                //   }
-                // });
+                let datas = [...tableData];
+                const {
+                  id
+                } = datas[row.index];
+                setUserID(id);
               }}
             >
               <span className="icon-holder">
@@ -581,7 +603,7 @@ function Riders() {
           </Form>
         </ModalBody>
         <ModalFooter>
-          <Button color="success" onClick={hideModalEditState}>
+          <Button color="success" onClick={e => onUpdate(e)}>
             Save
           </Button>
           <Button color="danger" onClick={hideModalEditState}>
@@ -598,7 +620,7 @@ function Riders() {
         <ModalHeader>Delete Rider</ModalHeader>
         <ModalBody>Are you sure you wan't to delete this rider!</ModalBody>
         <ModalFooter>
-          <Button color="danger" onClick={hideModalDeleteState}>
+          <Button color="danger" onClick={e => onDelete(e)}>
             Yes
           </Button>
           <Button color="secondary" onClick={hideModalDeleteState}>
