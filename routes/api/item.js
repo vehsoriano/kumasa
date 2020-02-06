@@ -55,4 +55,15 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.get("/branch/:branch_id", async (req, res) => {
+  try {
+    const item = await Item.find({item_branch_id: req.params.branch_id});
+
+    res.json(item);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
 module.exports = router;

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 
-import Table from "../../../containers/Table";
+import CustomTable from "../../../containers/Table";
 import ReactTooltip from "react-tooltip";
 import { ReactComponent as IconDelete } from "../../../assets/img/icon-delete.svg";
 import { ReactComponent as IconEdit } from "../../../assets/img/icon-edit.svg";
@@ -20,25 +20,37 @@ import {
   Input,
   InputGroup,
   InputGroupAddon,
-  InputGroupText
+  InputGroupText,
+  Table
 } from "reactstrap";
 
 function Affiliates() {
   const [modalEditState, setModalEditSate] = useState(false);
   const [modalDeleteState, setModalDeleteSate] = useState(false);
   const [modalAddState, setModalAddSate] = useState(false);
+  const [modalViewState, setModalViewSate] = useState(false);
   const [tableData, setTableData] = useState([]);
+  const [itemData, setItemData] = useState([]);
   const [branchID, setBranchID] = useState("");
   const [formData, setFormData] = useState({
     name: "",
     contact: "",
     address: ""
   });
+  const [itemFormData, setItemFormData] = useState({
+    item_name: "",
+    price: "",
+    status: ""
+  });
 
   const { name, contact, address } = formData;
+  const { item_name, price, status } = itemFormData;
 
   const onChange = e =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
+  const onItemChange = e =>
+    setItemFormData({ ...itemFormData, [e.target.name]: e.target.value });
+
   function getData() {
     // console.log("yes");
     axios
@@ -46,6 +58,19 @@ function Affiliates() {
       .then(res => {
         console.log(res.data);
         setTableData(res.data);
+        // setLoader(true)
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+  function getItems(branch_id) {
+    // console.log("yes");
+    axios
+      .get(`api/item/branch/${branch_id}`)
+      .then(res => {
+        console.log(res.data);
+        setItemData(res.data);
         // setLoader(true)
       })
       .catch(err => {
@@ -86,6 +111,17 @@ function Affiliates() {
     // setCurrentOrder("");
   };
 
+  const handleShowView = () => {
+    setModalViewSate(true);
+  };
+
+  const hideModalViewState = () => {
+    setModalViewSate(false);
+    clearFormData();
+    // getData();
+    // setCurrentOrder("");
+  };
+
   // console.log(tableData);
   const onSubmit = e => {
     e.preventDefault();
@@ -103,6 +139,7 @@ function Affiliates() {
         console.log(res.data);
         getData();
         setModalAddSate(false);
+        clearFormData();
         // setTableData(res.data);
         // setLoader(true)
       })
@@ -128,6 +165,33 @@ function Affiliates() {
         console.log(res.data);
         getData();
         setModalEditSate(false);
+        clearFormData();
+        // setTableData(res.data);
+        // setLoader(true)
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  };
+  const onAddItem = e => {
+    e.preventDefault();
+
+    // console.log("Yey");
+    const req = {
+      item_branch_id: branchID,
+      item_name,
+      price,
+      status
+    };
+    // return console.log(req);
+    axios
+      .post(`api/item`, req)
+      .then(res => {
+        console.log(res.data);
+        getData();
+        getItems(branchID);
+        clearFormData();
+        // setModalViewSate(false);
         // setTableData(res.data);
         // setLoader(true)
       })
@@ -159,6 +223,11 @@ function Affiliates() {
       contact: "",
       address: ""
     });
+    setItemFormData({
+      item_name: "",
+      price: "",
+      status: ""
+    });
   }
 
   const columns = [
@@ -188,6 +257,31 @@ function Affiliates() {
             <button
               className="btn-icon"
               onClick={() => {
+                handleShowView();
+                let datas = [...tableData];
+                const { id, branch_name, contact, address } = datas[row.index];
+
+                setBranchID(id);
+                getItems(id);
+                setFormData({
+                  name: branch_name,
+                  contact,
+                  address
+                });
+              }}
+            >
+              <span className="icon-holder">
+                <span className="fa fa-eye" data-tip data-for="view" />
+              </span>
+            </button>
+            <ReactTooltip id="view" type="warning" effect="solid">
+              <span>View</span>
+            </ReactTooltip>
+          </div>
+          <div className="button-holder">
+            <button
+              className="btn-icon"
+              onClick={() => {
                 handleShowEdit();
                 let datas = [...tableData];
                 const { id, branch_name, contact, address } = datas[row.index];
@@ -198,41 +292,6 @@ function Affiliates() {
                   contact,
                   address
                 });
-                // console.log(datas[row.index]);
-                //   // getData()
-                //   /*
-                //    * Get data from user datas
-                //    */
-                //   let datas = [...userData];
-                //   console.log({ USERS: datas[row.index] });
-                //   let status = datas[row.index].user_status.toString();
-                //   let number = datas[row.index].user_phone.toString();
-                //   /*
-                //    * Initialize CurrentID
-                //    */
-                //   setCurrentEdit_ID(datas[row.index]._id);
-                //   /*
-                //    * Add shorthand notation value
-                //    */
-                //   const {
-                //     user_role,
-                //     user_name,
-                //     user_address,
-                //     // user_phone,
-                //     user_email,
-                //     // user_password
-                //     // user_status
-                //   } = datas[row.index];
-                //   /*
-                //    * Set User Data value to Current Input Fields
-                //    */
-                //   values.role = user_role;
-                //   values.name = user_name;
-                //   values.address = user_address;
-                //   values.phone_number = number;
-                //   values.email = user_email;
-                //   values.password = '';
-                //   values.status = status;
               }}
             >
               <span className="icon-holder">
@@ -252,33 +311,6 @@ function Affiliates() {
                 const { id } = datas[row.index];
 
                 setBranchID(id);
-                // let datas = [...userData];
-                // console.log(datas[row.index]._id);
-                // const deleteID = datas[row.index]._id;
-                // Swal.fire({
-                //   title: 'Are you sure?',
-                //   text: "You won't be able to revert this!",
-                //   icon: 'warning',
-                //   showCancelButton: true,
-                //   confirmButtonColor: '#3085d6',
-                //   cancelButtonColor: '#d33',
-                //   confirmButtonText: 'Yes, delete it!'
-                // }).then(result => {
-                //   if (result.value) {
-                //     axios.delete(`api/users/${deleteID}`).then(response => {
-                //       console.log(response);
-                //       getData();
-                //     });
-                //     let title = 'Deleted!';
-                //     let message = 'User has been deleted successfully!';
-                //     successNotif(title, message);
-                //     // Swal.fire(
-                //     //   'Deleted!',
-                //     //   'User has been deleted successfully!',
-                //     //   'success'
-                //     // )
-                //   }
-                // });
               }}
             >
               <span className="icon-holder">
@@ -298,6 +330,28 @@ function Affiliates() {
     }
   ];
 
+  const items = [
+    {
+      id: "1",
+      item_name: "Mcdonalds Burger",
+      price: "5",
+      status: "true"
+    },
+    {
+      id: "2",
+      item_name: "Mcdonalds Chicken",
+      price: "2",
+      status: "true"
+    },
+    {
+      id: "3",
+      item_name: "Mcdonalds Fries",
+      price: "2",
+      status: "true"
+    }
+  ];
+  var totalAmount = 0;
+
   return (
     <React.Fragment>
       <Button
@@ -308,7 +362,7 @@ function Affiliates() {
       >
         Add Branch
       </Button>
-      <Table data={tableData} columns={columns} />
+      <CustomTable data={tableData} columns={columns} />
       {/* for modal Add */}
       <Modal
         isOpen={modalAddState}
@@ -426,6 +480,95 @@ function Affiliates() {
           </Button>
           <Button color="danger" onClick={hideModalEditState}>
             Cancel
+          </Button>
+        </ModalFooter>
+      </Modal>
+      {/* for view modal */}
+      <Modal
+        isOpen={modalViewState}
+        toggle={hideModalViewState}
+        className="modals modal-primary"
+      >
+        <ModalHeader>Branch Details</ModalHeader>
+        <ModalBody>
+          <Form>
+            <h1>View Branch Items</h1>
+            <p className="text-muted">Please fill out the field</p>
+            <InputGroup className="mb-3">
+              {/* <InputGroupAddon addonType="prepend">
+                <InputGroupText>
+                  <i className="icon-user"></i>
+                </InputGroupText>
+              </InputGroupAddon> */}
+              <Input
+                type="text"
+                placeholder="Item Name"
+                autoComplete="item_name"
+                name="item_name"
+                value={item_name}
+                onChange={e => onItemChange(e)}
+                required
+              />
+            </InputGroup>
+            <InputGroup className="mb-3">
+              <Input
+                type="text"
+                placeholder="Price"
+                autoComplete="price"
+                name="price"
+                value={price}
+                onChange={e => onItemChange(e)}
+                required
+              />
+            </InputGroup>
+            <InputGroup className="mb-3">
+              <Input
+                type="text"
+                placeholder="Status"
+                autoComplete="status"
+                name="status"
+                value={status}
+                onChange={e => onItemChange(e)}
+                required
+              />
+            </InputGroup>
+          </Form>
+          <Button color="primary" onClick={e => onAddItem(e)}>
+            Add
+          </Button>
+          <br />
+          <br />
+          <Table bordered>
+            <thead>
+              <tr>
+                <th>#</th>
+                <th>Item Name</th>
+                <th>Price</th>
+                <th>Status</th>
+              </tr>
+            </thead>
+            <tbody>
+              {itemData.map(x => {
+                var count = 0;
+                count++;
+                return (
+                  <tr key={x.id}>
+                    <th scope="row">{count}</th>
+                    <td>{x.item_name}</td>
+                    <td>{x.price}</td>
+                    <td>{x.status}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </Table>
+        </ModalBody>
+        <ModalFooter>
+          {/* <Button color="success" onClick={e => onUpdate(e)}>
+            Save
+          </Button> */}
+          <Button color="danger" onClick={hideModalViewState}>
+            Close
           </Button>
         </ModalFooter>
       </Modal>
