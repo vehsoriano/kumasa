@@ -24,7 +24,12 @@ router.post(
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.json({
+        data: {
+          status: "warning",
+          msg: "Some field are required"
+        }
+      });
     }
 
     const { name, contact, address } = req.body;
@@ -37,8 +42,13 @@ router.post(
       });
 
       await branch.save();
-
-      res.json(branch);
+      return res.json({
+        data: {
+          status: "success",
+          msg: "Awesome Branch added"
+        },
+        branch
+      });
     } catch (err) {
       console.error(err.message);
       res.status(500).send("Server error");
