@@ -64,6 +64,7 @@ function Affiliates() {
         console.log(err);
       });
   }
+
   function getItems(branch_id) {
     // console.log("yes");
     axios
@@ -77,6 +78,7 @@ function Affiliates() {
         console.log(err);
       });
   }
+
   useEffect(() => {
     getData();
   }, []);
@@ -147,7 +149,6 @@ function Affiliates() {
         console.log(err);
       });
   };
-
   // console.log(tableData);
   const onUpdate = e => {
     e.preventDefault();
@@ -173,7 +174,8 @@ function Affiliates() {
         console.log(err);
       });
   };
-  const onAddItem = e => {
+
+  const handleAddItemSubmit = e => {
     e.preventDefault();
 
     // console.log("Yey");
@@ -199,6 +201,7 @@ function Affiliates() {
         console.log(err);
       });
   };
+
   // console.log(tableData);
   const onDelete = e => {
     e.preventDefault();
@@ -217,6 +220,7 @@ function Affiliates() {
         console.log(err);
       });
   };
+
   function clearFormData() {
     setFormData({
       name: "",
@@ -491,7 +495,7 @@ function Affiliates() {
       >
         <ModalHeader>Branch Details</ModalHeader>
         <ModalBody>
-          <Form>
+          <Form onSubmit={handleAddItemSubmit}>
             <h1>View Branch Items</h1>
             <p className="text-muted">Please fill out the field</p>
             <InputGroup className="mb-3">
@@ -532,10 +536,15 @@ function Affiliates() {
                 required
               />
             </InputGroup>
+            <Button 
+              color="primary"  
+              type="submit">
+              Add
+            </Button>
           </Form>
-          <Button color="primary" onClick={e => onAddItem(e)}>
+          {/* <Button color="primary" onClick={e => onAddItem(e)}>
             Add
-          </Button>
+          </Button> */}
           <br />
           <br />
           <Table bordered>
