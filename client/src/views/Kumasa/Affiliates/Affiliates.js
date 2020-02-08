@@ -122,6 +122,21 @@ function Affiliates() {
     // setCurrentOrder("");
   };
 
+  const onDeleteItem = (item_id) => {
+    axios
+      .delete(`api/item/delete/${item_id}`)
+      .then(res => {
+        console.log(res.data);
+        getData();
+        getItems(branchID);
+        // setTableData(res.data);
+        // setLoader(true)
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
   // console.log(tableData);
   const onSubmit = e => {
     e.preventDefault();
@@ -330,28 +345,8 @@ function Affiliates() {
     }
   ];
 
-  const items = [
-    {
-      id: "1",
-      item_name: "Mcdonalds Burger",
-      price: "5",
-      status: "true"
-    },
-    {
-      id: "2",
-      item_name: "Mcdonalds Chicken",
-      price: "2",
-      status: "true"
-    },
-    {
-      id: "3",
-      item_name: "Mcdonalds Fries",
-      price: "2",
-      status: "true"
-    }
-  ];
   var totalAmount = 0;
-
+  var count = 0;
   return (
     <React.Fragment>
       <Button
@@ -487,6 +482,7 @@ function Affiliates() {
       <Modal
         isOpen={modalViewState}
         toggle={hideModalViewState}
+        size="lg"
         className="modals modal-primary"
       >
         <ModalHeader>Branch Details</ModalHeader>
@@ -545,18 +541,35 @@ function Affiliates() {
                 <th>Item Name</th>
                 <th>Price</th>
                 <th>Status</th>
+                <th>Action</th>
               </tr>
             </thead>
             <tbody>
               {itemData.map(x => {
-                var count = 0;
+                // console.log(x);
+
                 count++;
                 return (
-                  <tr key={x.id}>
+                  <tr key={x._id}>
                     <th scope="row">{count}</th>
                     <td>{x.item_name}</td>
                     <td>{x.price}</td>
                     <td>{x.status}</td>
+                    <td>
+                      <Button
+                        color="danger"
+                        onClick={() => {
+                          onDeleteItem(x._id);
+                          console.log(x._id);
+                        }}
+                      >
+                        <span
+                          className="fa fa-trash"
+                          data-tip
+                          data-for="view"
+                        />
+                      </Button>
+                    </td>
                   </tr>
                 );
               })}
@@ -567,7 +580,7 @@ function Affiliates() {
           {/* <Button color="success" onClick={e => onUpdate(e)}>
             Save
           </Button> */}
-          <Button color="danger" onClick={hideModalViewState}>
+          <Button color="secondary" onClick={hideModalViewState}>
             Close
           </Button>
         </ModalFooter>

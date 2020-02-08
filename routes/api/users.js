@@ -32,7 +32,12 @@ router.post(
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.json({
+        data: {
+          status: "warning",
+          msg: "Some Field are Required"
+        }
+      });
     }
 
     const {
@@ -54,9 +59,12 @@ router.post(
       let user = await User.findOne({ email });
 
       if (user) {
-        return res
-          .status(400)
-          .json({ errors: [{ msg: "User already exist" }] });
+        return res.json({
+          data: {
+            status: "warning",
+            msg: "User already exist"
+          }
+        });
       }
 
       user = new User({
@@ -106,7 +114,14 @@ router.post(
         { expiresIn: 36000 },
         (err, token) => {
           if ((err, token)) {
-            res.json({ token });
+            return res.json({
+              data: {
+                status: "success",
+                msg: "User already exist"
+              },
+              user,
+              token
+            });
           }
         }
       );
@@ -130,7 +145,7 @@ router.put("/update/:user_id", async (req, res) => {
     province,
     role,
     password
-  } = req.body
+  } = req.body;
   try {
     // update user
     const user = await User.findById(req.params.user_id);
@@ -148,17 +163,19 @@ router.put("/update/:user_id", async (req, res) => {
       const salt = await bcrypt.genSalt(10);
       user.password = await bcrypt.hash(password, salt);
     }
-    
+
     user.save();
     // update riders profile
-    const riders_profile = await RidersProfile.findOne({rider_user_id: req.params.user_id});
+    const riders_profile = await RidersProfile.findOne({
+      rider_user_id: req.params.user_id
+    });
     riders_profile.age = age;
     riders_profile.save();
 
     res.json({
-      data:{
-        status: 'success',
-        msg: 'Profile Updated'
+      data: {
+        status: "success",
+        msg: "Profile Updated"
       }
     });
   } catch (err) {
@@ -170,15 +187,14 @@ router.put("/update/:user_id", async (req, res) => {
 // dlete user
 router.delete("/delete/:user_id", async (req, res) => {
   try {
-    await User.deleteOne({_id: req.params.user_id});
-    await RidersProfile.deleteOne({rider_user_id: req.params.user_id});
+    await User.deleteOne({ _id: req.params.user_id });
+    await RidersProfile.deleteOne({ rider_user_id: req.params.user_id });
     res.json({
-      data:{
-        status: 'success',
-        msg: 'User Removed!'
+      data: {
+        status: "success",
+        msg: "User Removed!"
       }
     });
-
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");
@@ -196,8 +212,6 @@ router.get("/", async (req, res) => {
     res.status(500).send("Server error");
   }
 });
-
-
 
 // get all riders
 router.get("/riders", async (req, res) => {

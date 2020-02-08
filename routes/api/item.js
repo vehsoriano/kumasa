@@ -21,7 +21,12 @@ router.post(
   async (req, res) => {
     const errors = validationResult(req);
     if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
+      return res.json({
+        data: {
+          status: "warning",
+          msg: "Some field are required"
+        }
+      });
     }
 
     const { item_branch_id, item_name, price, status } = req.body;
@@ -35,8 +40,13 @@ router.post(
       });
 
       await item.save();
-
-      res.json(item);
+      return res.json({
+        data: {
+          status: "success",
+          msg: "Awesome item added"
+        },
+        item
+      });
     } catch (err) {
       console.error(err.message);
       res.status(500).send("Server error");
@@ -57,9 +67,26 @@ router.get("/", async (req, res) => {
 
 router.get("/branch/:branch_id", async (req, res) => {
   try {
-    const item = await Item.find({item_branch_id: req.params.branch_id});
+    const item = await Item.find({ item_branch_id: req.params.branch_id });
 
     res.json(item);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
+router.delete("/delete/:item_id", async (req, res) => {
+  try {
+    await Item.deleteOne({ _id: req.params.item_id }).then(response => {
+      return res.json({
+        data: {
+          status: "success",
+          msg: "Item Successfully Deleted"
+        },
+        item
+      });
+    });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");
