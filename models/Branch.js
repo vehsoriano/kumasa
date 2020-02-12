@@ -11,6 +11,9 @@ const BranchSchema = new Schema({
   address: {
     type: String
   },
+  logo: {
+    type: String
+  },
   created_at: {
     type: Date,
     default: Date.now

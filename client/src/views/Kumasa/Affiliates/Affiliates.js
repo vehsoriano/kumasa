@@ -35,7 +35,8 @@ function Affiliates() {
   const [formData, setFormData] = useState({
     name: "",
     contact: "",
-    address: ""
+    address: "",
+    logo: ""
   });
   const [itemFormData, setItemFormData] = useState({
     item_name: "",
@@ -43,7 +44,39 @@ function Affiliates() {
     status: ""
   });
 
-  const { name, contact, address } = formData;
+
+  const [file, setFile] = useState('')
+  const [imagePreviewURL, setImagePreviewURL] = useState('')
+
+  const handleImageChange = (e) => {
+    e.preventDefault()
+    console.log(e)
+
+    let reader = new FileReader()
+    let file = e.target.files[0]
+
+    reader.onloadend = () => {
+      setFile(file)
+      setImagePreviewURL(reader.result)
+    }
+
+    reader.readAsDataURL(file)
+  }
+
+  let imagePrev = null
+  if(imagePreviewURL) {
+    imagePrev = (
+      <img style={{maxWidth: 150, maxHeight: 150, margin: 15}} src={imagePreviewURL} />
+    )
+  } else {
+    imagePrev = (
+      ''
+    )
+  }
+
+
+
+  const { name, contact, address, logo } = formData;
   const { item_name, price, status } = itemFormData;
 
   const onChange = e =>
@@ -85,10 +118,14 @@ function Affiliates() {
 
   const handleShowAdd = () => {
     setModalAddSate(true);
+    clearFormData()
+    setImagePreviewURL('')
   };
   const hideModalAddState = () => {
     // addData();
     setModalAddSate(false);
+    clearFormData()
+    setImagePreviewURL('')
     // getData();
     // setCurrentOrder("");
   };
@@ -143,51 +180,98 @@ function Affiliates() {
   const onSubmit = e => {
     e.preventDefault();
 
+    const token = 'ea30b65f2cb1bced241c333046e4137941cd0c9f'
+
     // console.log("Yey");
-    const req = {
-      name,
-      contact,
-      address
-    };
-    // return console.log(req);
-    axios
-      .post("api/branch", req)
-      .then(res => {
-        console.log(res.data);
-        getData();
-        setModalAddSate(false);
-        clearFormData();
-        // setTableData(res.data);
-        // setLoader(true)
+    console.log(file)
+    console.log(imagePreviewURL)
+
+        
+      const config = {
+        headers: { Authorization: `Bearer ${token}` }
+      };
+
+      axios.post( 
+        'https://api.imgur.com/3/upload',
+        file,
+        config
+      ).then(res => {
+        const req = {
+          name,
+          contact,
+          address,
+          logo: res.data.data.link
+        };
+  
+        axios
+          .post("api/branch", req)
+          .then(res => {
+            console.log(res.data);
+            getData();
+            setModalAddSate(false);
+            clearFormData();
+            // setTableData(res.data);
+            // setLoader(true)
+          })
+          .catch(err => {
+            console.log(err);
+          });
       })
-      .catch(err => {
-        console.log(err);
-      });
+      .catch(function(err) {
+        console.log(err)
+      })
+
+    // if(false) {
+    // } else {
+    //   console.log('cannot post')
+    // }
+    
   };
   // console.log(tableData);
   const onUpdate = e => {
     e.preventDefault();
 
-    // console.log("Yey");
+    const token = 'ea30b65f2cb1bced241c333046e4137941cd0c9f'
+
+    const config = {
+      headers: { Authorization: `Bearer ${token}` }
+    };   
     const req = {
-      name,
-      contact,
-      address
+      logo: imagePreviewURL ? imagePreviewURL : logo
     };
-    // return console.log(req);
-    axios
-      .put(`api/branch/update/${branchID}`, req)
-      .then(res => {
-        console.log(res.data);
-        getData();
-        setModalEditSate(false);
-        clearFormData();
-        // setTableData(res.data);
-        // setLoader(true)
-      })
-      .catch(err => {
-        console.log(err);
-      });
+
+    axios.post( 
+      'https://api.imgur.com/3/upload',
+      file,
+      config
+    ).then(res => {
+      console.log(res)
+      const reqParam = {
+        name,
+        contact,
+        address,
+        logo: res.data.data.link
+      }
+      axios
+        .put(`api/branch/update/${branchID}`, reqParam)
+        .then(res => {
+          console.log(res.data);
+          getData();
+          setModalEditSate(false);
+          clearFormData();
+          // setTableData(res.data);
+          // setLoader(true)
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    })
+    .catch(function(err) {
+      console.log(err)
+    })
+    console.log(req)
+    
+    //
   };
 
   const handleAddItemSubmit = e => {
@@ -240,12 +324,14 @@ function Affiliates() {
     setFormData({
       name: "",
       contact: "",
-      address: ""
+      address: "",
+      logo: ''
     });
     setItemFormData({
       item_name: "",
       price: "",
-      status: ""
+      status: "",
+      logo: ''
     });
   }
 
@@ -278,14 +364,15 @@ function Affiliates() {
               onClick={() => {
                 handleShowView();
                 let datas = [...tableData];
-                const { id, branch_name, contact, address } = datas[row.index];
+                const { id, branch_name, contact, address, logo } = datas[row.index];
 
                 setBranchID(id);
                 getItems(id);
                 setFormData({
                   name: branch_name,
                   contact,
-                  address
+                  address,
+                  logo
                 });
               }}
             >
@@ -303,13 +390,14 @@ function Affiliates() {
               onClick={() => {
                 handleShowEdit();
                 let datas = [...tableData];
-                const { id, branch_name, contact, address } = datas[row.index];
+                const { id, branch_name, contact, address, logo } = datas[row.index];
 
                 setBranchID(id);
                 setFormData({
                   name: branch_name,
                   contact,
-                  address
+                  address,
+                  logo
                 });
               }}
             >
@@ -349,6 +437,7 @@ function Affiliates() {
     }
   ];
 
+
   var totalAmount = 0;
   var count = 0;
   return (
@@ -361,7 +450,15 @@ function Affiliates() {
       >
         Add Branch
       </Button>
-      <CustomTable data={tableData} columns={columns} />
+        {
+          tableData ? 
+          <CustomTable data={tableData} columns={columns} />
+          : 
+          <div className="holder-loader">
+            <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+          </div>
+        }
+
       {/* for modal Add */}
       <Modal
         isOpen={modalAddState}
@@ -370,9 +467,18 @@ function Affiliates() {
       >
         <ModalHeader>Add Affiliates</ModalHeader>
         <ModalBody>
-          <Form>
+          <Form onSubmit={onSubmit}>
             <h1>Create Affiliates</h1>
             <p className="text-muted">Please fill out all the fields</p>
+            {imagePrev}
+            <Input 
+            type="file" 
+            name="file" 
+            id="exampleFile" 
+            accept="image/*"
+            required
+            onChange={ (e) => handleImageChange(e)} />
+            <br></br>
             <InputGroup className="mb-3">
               {/* <InputGroupAddon addonType="prepend">
                 <InputGroupText>
@@ -411,16 +517,22 @@ function Affiliates() {
                 required
               />
             </InputGroup>
-          </Form>
-        </ModalBody>
-        <ModalFooter>
-          <Button color="primary" onClick={e => onSubmit(e)}>
+            
+
+
+          <hr></hr>
+          <Button color="primary mr-2" type="submit">
             Save
           </Button>
           <Button color="secondary" onClick={hideModalAddState}>
             Cancel
           </Button>
-        </ModalFooter>
+
+          </Form>
+        </ModalBody>
+        {/* <ModalFooter>
+          
+        </ModalFooter> */}
       </Modal>
       {/* for edit modal */}
       <Modal
@@ -433,12 +545,30 @@ function Affiliates() {
           <Form>
             <h1>Update Branch Info</h1>
             <p className="text-muted">Please fill out all the fields</p>
+            {logo ?
+            <>
+              {
+                console.log(imagePrev)
+              }
+
+              <img style={{maxHeight:150, maxWidth:150, margin:15}} src={imagePrev ? imagePrev.props.src : logo}/>
+              <Input 
+              type="file" 
+              name="file" 
+              id="exampleFile" 
+              accept="image/*"
+              required
+              onChange={ (e) => handleImageChange(e)} />
+            </>
+              : ''
+            }
             <InputGroup className="mb-3">
               {/* <InputGroupAddon addonType="prepend">
                 <InputGroupText>
                   <i className="icon-user"></i>
                 </InputGroupText>
               </InputGroupAddon> */}
+              <div style={{flex: '1 1 auto', width: '100%'}}>Name:</div>
               <Input
                 type="text"
                 placeholder="Branch Name"
@@ -450,6 +580,7 @@ function Affiliates() {
               />
             </InputGroup>
             <InputGroup className="mb-3">
+            <div style={{flex: '1 1 auto', width: '100%'}}>Contact Details:</div>
               <Input
                 type="text"
                 placeholder="Contact"
@@ -461,6 +592,7 @@ function Affiliates() {
               />
             </InputGroup>
             <InputGroup className="mb-3">
+            <div style={{flex: '1 1 auto', width: '100%'}}>Address:</div>
               <Input
                 type="text"
                 placeholder="Address"

@@ -32,13 +32,14 @@ router.post(
       });
     }
 
-    const { name, contact, address } = req.body;
+    const { name, contact, address, logo } = req.body;
 
     try {
       branch = new Branch({
         name,
         contact,
-        address
+        address,
+        logo
       });
 
       await branch.save();
@@ -56,12 +57,13 @@ router.post(
   }
 );
 router.put("/update/:branch_id", async (req, res) => {
-  const { name, contact, address } = req.body;
+  const { name, contact, address, logo } = req.body;
   try {
     const branch = await Branch.findById(req.params.branch_id);
     branch.name = name;
     branch.contact = contact;
     branch.address = address;
+    branch.logo = logo;
     branch.save();
     res.json({
       data: {
@@ -115,6 +117,7 @@ router.get("/affiliates", async (req, res) => {
         branch_name: branch[index].name,
         address: branch[index].address,
         contact: branch[index].contact,
+        logo: branch[index].logo,
         total_items: item.length
       });
     }
