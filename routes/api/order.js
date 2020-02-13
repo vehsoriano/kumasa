@@ -107,6 +107,7 @@ router.get("/orders", async (req, res) => {
         order_id: orders[index]._id,
         order_number: orders[index].order_id,
         order_total: order_total,
+        branch_logo: branch.logo,
         order_branch: branch.name,
         status: orders[index].status,
         order_date: orders[index].created_at,
@@ -143,6 +144,7 @@ router.get("/ordersItem/:order_id", async (req, res) => {
 
       data.push({
         id: index + 1,
+        logo: itemData.logo,
         item_name: itemData.item_name,
         qty: orders_item[index].qty,
         price: itemData.price,

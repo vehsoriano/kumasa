@@ -201,7 +201,7 @@ function Affiliates() {
       };
 
       axios.post( 
-        'https://api.imgur.com/3/upload',
+        'https://api.imgur.com/3/image',
         file,
         config
       ).then(res => {
@@ -358,9 +358,11 @@ function Affiliates() {
     setItemFormData({
       item_name: "",
       price: "",
-      status: "",
+      status: "Available",
       logo: ''
     });
+    setImagePreviewURL('')
+    setFile('')
   }
 
   const columns = [
@@ -742,11 +744,6 @@ function Affiliates() {
                 }
 
                 count++;
-
-                var t = document.getElementById("table"), // This have to be the ID of your table, not the tag
-                    d = t.getElementsByTagName("tr")[0],
-                    r = d.getElementsByTagName("td")[0];
-
                 return (
                   <tr key={x._id}>
                     <th scope="row">{count}</th>

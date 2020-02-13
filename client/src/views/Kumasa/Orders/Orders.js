@@ -64,6 +64,21 @@ function Orders() {
   const [branchData, setBranchData] = useState([]); // All User Order Data
   const [items, setItems] = useState([]); // All User Order Data
 
+  function getOrderItems(orderId) {
+    // console.log("yes");
+    axios
+      .get(`api/order/ordersItem/${orderId}`)
+      .then(res => {
+        // console.log(res.data)
+        setItems(res.data);
+
+        // setLoader(true)
+      })
+      .catch(err => {
+        console.log(err);
+      });
+  }
+
   function getData() {
     // console.log("yes");
     axios
@@ -71,7 +86,7 @@ function Orders() {
       .then(res => {
         console.log(res.data)
         setOrderData(res.data);
-        setCurrentOrder(res.data);
+        // setCurrentOrder(res.data);
         // setLoader(true)
       })
       .catch(err => {
@@ -94,36 +109,28 @@ function Orders() {
       });
   }
 
-  function getOrderItems(orderId) {
-    // console.log("yes");
-    axios
-      .get(`api/order/ordersItem/${orderId}`)
-      .then(res => {
-        // console.log(res.data)
-        setItems(res.data);
-
-        // setLoader(true)
-      })
-      .catch(err => {
-        console.log(err);
-      });
-  }
+  
 
   useEffect(() => {
     getData();
     getBranchData();
   }, []);
 
+  // useEffect(() => {
+  //   getOrderItems(currentOrder)
+  // }, [currentOrder])
+
   console.log(currentOrder);
 
   const handleViewOrder = () => {
     setModalState(true);
+
   };
 
   const hideModal = () => {
     setModalState(false);
     getData();
-    setCurrentOrder("");
+    // setCurrentOrder("");
   };
 
   const columns = [
@@ -175,7 +182,7 @@ function Orders() {
               onClick={() => {
                 handleViewOrder();
 
-                let datas = [...currentOrder];
+                let datas = [...orderData];
                 console.log({ USERS: datas[row.index] });
 
                 setCurrentOrder(datas[row.index]);
@@ -293,11 +300,19 @@ function Orders() {
           <br />
           <h4>Branch Details</h4>
           <hr />
+
           {branchData
             .filter(x => x.name === order_branch)
             .map(x => {
               return (
                 <div key={x.name}>
+                  {
+                    x.logo ? (
+                      <div style={{marginBottom: '5px'}}>
+                        <img style={{maxWidth: 75, maxHeight: 75}} src={x.logo}/>
+                      </div>
+                    ) : ''
+                  }
                   <div className="holder-details">
                     <div className="holder-key">Name:</div>
                     <div className="holder-value">{x.name}</div>
@@ -331,6 +346,7 @@ function Orders() {
             <thead>
               <tr>
                 <th>#</th>
+                <th>Logo</th>
                 <th>Item Name</th>
                 <th>Qty</th>
                 <th>Price</th>
@@ -344,6 +360,7 @@ function Orders() {
                 return (
                   <tr key={x.id}>
                     <th scope="row">{x.id}</th>
+                    <td><img style={{maxWidth: 30, maxHeight: 30}} src={x.logo}/></td>
                     <td>{x.item_name}</td>
                     <td>{x.qty}</td>
                     <td>{x.price}</td>
@@ -354,7 +371,7 @@ function Orders() {
             </tbody>
             <tfoot>
               <tr>
-                <th id="total" colSpan="4">
+                <th id="total" colSpan="5">
                   Total :
                 </th>
                 <td>{totalAmount}</td>
