@@ -69,13 +69,13 @@ function Orders() {
     axios
       .get("api/order/orders")
       .then(res => {
-        // console.log(res.data)
+        console.log(res.data)
         setOrderData(res.data);
         setCurrentOrder(res.data);
         // setLoader(true)
       })
       .catch(err => {
-        console.log(err);
+        console.log(err.response);
       });
   }
 

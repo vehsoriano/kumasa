@@ -41,8 +41,10 @@ function Affiliates() {
   const [itemFormData, setItemFormData] = useState({
     item_name: "",
     price: "",
-    status: ""
+    status: "Available",
   });
+
+  const [readOnlyInput, setReadOnlyInput] = useState(true)
 
 
   const [file, setFile] = useState('')
@@ -64,9 +66,13 @@ function Affiliates() {
   }
 
   let imagePrev = null
+  let imagePrevSmall = null
   if(imagePreviewURL) {
     imagePrev = (
       <img style={{maxWidth: 150, maxHeight: 150, margin: 15}} src={imagePreviewURL} />
+    )
+    imagePrevSmall = (
+      <img style={{maxWidth: 50, maxHeight: 50, margin: 15}} src={imagePreviewURL} />
     )
   } else {
     imagePrev = (
@@ -81,8 +87,11 @@ function Affiliates() {
 
   const onChange = e =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
-  const onItemChange = e =>
-    setItemFormData({ ...itemFormData, [e.target.name]: e.target.value });
+  const onItemChange = (e) =>  {
+    console.log(e.target.name)
+    console.log(e.target.value)
+      setItemFormData({ ...itemFormData, [e.target.name]: e.target.value });
+  }
 
   function getData() {
     // console.log("yes");
@@ -232,7 +241,6 @@ function Affiliates() {
     e.preventDefault();
 
     const token = 'ea30b65f2cb1bced241c333046e4137941cd0c9f'
-
     const config = {
       headers: { Authorization: `Bearer ${token}` }
     };   
@@ -241,7 +249,7 @@ function Affiliates() {
     };
 
     axios.post( 
-      'https://api.imgur.com/3/upload',
+      'https://api.imgur.com/3/image',
       file,
       config
     ).then(res => {
@@ -277,28 +285,48 @@ function Affiliates() {
   const handleAddItemSubmit = e => {
     e.preventDefault();
 
-    // console.log("Yey");
+    const token = 'ea30b65f2cb1bced241c333046e4137941cd0c9f'
+    const config = {
+      headers: { Authorization: `Bearer ${token}` }
+    };   
     const req = {
-      item_branch_id: branchID,
-      item_name,
-      price,
-      status
+      logo: imagePreviewURL ? imagePreviewURL : logo
     };
-    // return console.log(req);
-    axios
-      .post(`api/item`, req)
-      .then(res => {
-        console.log(res.data);
-        getData();
-        getItems(branchID);
-        clearFormData();
-        // setModalViewSate(false);
-        // setTableData(res.data);
-        // setLoader(true)
-      })
-      .catch(err => {
-        console.log(err);
-      });
+
+    axios.post( 
+      'https://api.imgur.com/3/image',
+      file,
+      config
+    ).then(res => {
+      console.log(res)
+      const req = {
+        item_branch_id: branchID,
+        item_name,
+        price,
+        status,
+        logo: res.data.data.link
+      };
+      // return console.log(req);
+      axios
+        .post(`api/item`, req)
+        .then(res => {
+          console.log(res.data);
+          getData();
+          getItems(branchID);
+          clearFormData();
+          // setModalViewSate(false);
+          // setTableData(res.data);
+          // setLoader(true)
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    })
+    .catch(err => {
+      console.log(err)
+    })
+    // console.log("Yey");
+    
   };
 
   // console.log(tableData);
@@ -381,7 +409,7 @@ function Affiliates() {
               </span>
             </button>
             <ReactTooltip id="view" type="warning" effect="solid">
-              <span>View</span>
+              <span>View Items</span>
             </ReactTooltip>
           </div>
           <div className="button-holder">
@@ -626,6 +654,17 @@ function Affiliates() {
           <Form onSubmit={handleAddItemSubmit}>
             <h1>View Branch Items</h1>
             <p className="text-muted">Please fill out the field</p>
+
+            {imagePrevSmall}
+              <Input 
+              type="file" 
+              name="file" 
+              id="exampleFile" 
+              accept="image/*"
+              required
+              onChange={ (e) => handleImageChange(e)} />
+             <br />
+
             <InputGroup className="mb-3">
               {/* <InputGroupAddon addonType="prepend">
                 <InputGroupText>
@@ -654,7 +693,15 @@ function Affiliates() {
               />
             </InputGroup>
             <InputGroup className="mb-3">
-              <Input
+            <Input 
+              type="select" 
+              name="select" 
+              id="exampleSelect" 
+              onChange={e => onItemChange(e)}>
+              <option value="Available">Available</option>
+              <option value="Not Available">Not Available</option>
+            </Input>
+              {/* <Input
                 type="text"
                 placeholder="Status"
                 autoComplete="status"
@@ -662,7 +709,7 @@ function Affiliates() {
                 value={status}
                 onChange={e => onItemChange(e)}
                 required
-              />
+              /> */}
             </InputGroup>
             <Button 
               color="primary"  
@@ -675,10 +722,11 @@ function Affiliates() {
           </Button> */}
           <br />
           <br />
-          <Table bordered>
+          <Table bordered id="table">
             <thead>
               <tr>
                 <th>#</th>
+                <th>Logo</th>
                 <th>Item Name</th>
                 <th>Price</th>
                 <th>Status</th>
@@ -689,16 +737,54 @@ function Affiliates() {
               {itemData.map(x => {
                 // console.log(x);
 
+                const onEditItem = () => {
+                  setReadOnlyInput(false)
+                }
+
                 count++;
+
+                var t = document.getElementById("table"), // This have to be the ID of your table, not the tag
+                    d = t.getElementsByTagName("tr")[0],
+                    r = d.getElementsByTagName("td")[0];
+
                 return (
                   <tr key={x._id}>
                     <th scope="row">{count}</th>
-                    <td>{x.item_name}</td>
+                    <td><img style={{maxWidth: 30, maxHeight: 30}} src={x.logo}/></td>
+                    <td>
+                      <input 
+                      className={readOnlyInput ? 'readOnly' : ''}
+                      type="text" 
+                      value={x.item_name} 
+                      readOnly={readOnlyInput}
+                    />
+                    </td>
                     <td>{x.price}</td>
                     <td>{x.status}</td>
-                    <td>
+                    <td>         
+                      <ReactTooltip id="edit" type="warning" effect="solid">
+                        <span>edit</span>
+                      </ReactTooltip>          
+                      <Button
+                        color="success"
+                        onClick={() => {
+                          onEditItem(x._id);
+                          console.log(x._id);
+                        }}
+                      >
+                        <span
+                          className="fa fa-edit"
+                          data-tip
+                          data-for="edit"
+                        />
+                      </Button>
+                      
+                      <ReactTooltip id="delete" type="warning" effect="solid">
+                        <span>delete</span>
+                      </ReactTooltip>
                       <Button
                         color="danger"
+                        className="ml-1"
                         onClick={() => {
                           onDeleteItem(x._id);
                           console.log(x._id);
@@ -707,9 +793,10 @@ function Affiliates() {
                         <span
                           className="fa fa-trash"
                           data-tip
-                          data-for="view"
+                          data-for="delete"
                         />
                       </Button>
+                      
                     </td>
                   </tr>
                 );

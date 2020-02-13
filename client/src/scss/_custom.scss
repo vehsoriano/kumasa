@@ -193,3 +193,9 @@
     transform: rotate(360deg);
   }
 }
+
+.readOnly {
+  border: none;
+  outline: none;
+  cursor: auto;
+}

@@ -29,14 +29,15 @@ router.post(
       });
     }
 
-    const { item_branch_id, item_name, price, status } = req.body;
+    const { item_branch_id, item_name, price, status, logo } = req.body;
 
     try {
       item = new Item({
         item_branch_id,
         item_name,
         price,
-        status
+        status,
+        logo,
       });
 
       await item.save();
@@ -70,6 +71,28 @@ router.get("/branch/:branch_id", async (req, res) => {
     const item = await Item.find({ item_branch_id: req.params.branch_id });
 
     res.json(item);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
+router.put("/update/:item_id", async (req, res) => {
+  const { name, price, status, logo } = req.body;
+  try {
+    const item = await Item.findById(req.params.item_id);
+    item.name = name;
+    item.price = price;
+    item.status = status;
+    item.logo = logo;
+    item.save();
+    res.json({
+      data: {
+        status: "success",
+        msg: "Item Updated!"
+      },
+      item
+    });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");

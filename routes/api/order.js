@@ -77,8 +77,13 @@ router.get("/orders", async (req, res) => {
 
     const data = [];
     const orders = await Order.find();
+
+    console.log(orders)
+
     for (let index = 0; index < orders.length; index++) {
       const user = await User.findById(orders[index].order_user_id);
+
+      // console.log(user)
 
       var order_total = "";
 
