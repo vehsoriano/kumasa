@@ -81,7 +81,7 @@ router.put("/update/:item_id", async (req, res) => {
   const { name, price, status, logo } = req.body;
   try {
     const item = await Item.findById(req.params.item_id);
-    item.name = name;
+    item.item_name = name;
     item.price = price;
     item.status = status;
     item.logo = logo;
@@ -106,8 +106,7 @@ router.delete("/delete/:item_id", async (req, res) => {
         data: {
           status: "success",
           msg: "Item Successfully Deleted"
-        },
-        item
+        }
       });
     });
   } catch (err) {

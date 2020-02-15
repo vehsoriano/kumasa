@@ -45,9 +45,9 @@ function Affiliates() {
   });
 
   const [loading, setLoading] = useState(false)
-
-  const [readOnlyInput, setReadOnlyInput] = useState(true)
-
+  const [editItem, setEditItem] = useState(false)
+  const [currentEditItem, setCurrentEditItem] = useState('')
+  const [isImageTouched, setIsImageTouched] = useState(false)
 
   const [file, setFile] = useState('')
   const [imagePreviewURL, setImagePreviewURL] = useState('')
@@ -55,13 +55,14 @@ function Affiliates() {
   const handleImageChange = (e) => {
     e.preventDefault()
     console.log(e)
-
+    
     let reader = new FileReader()
     let file = e.target.files[0]
-
+    
     reader.onloadend = () => {
       setFile(file)
       setImagePreviewURL(reader.result)
+      setIsImageTouched(true)
     }
 
     reader.readAsDataURL(file)
@@ -131,13 +132,11 @@ function Affiliates() {
   const handleShowAdd = () => {
     setModalAddSate(true);
     clearFormData()
-    setImagePreviewURL('')
   };
   const hideModalAddState = () => {
     // addData();
     setModalAddSate(false);
     clearFormData()
-    setImagePreviewURL('')
     // getData();
     // setCurrentOrder("");
   };
@@ -148,6 +147,7 @@ function Affiliates() {
   const hideModalEditState = () => {
     setModalEditSate(false);
     clearFormData();
+    setFile('')
     // getData();
     // setCurrentOrder("");
   };
@@ -169,12 +169,18 @@ function Affiliates() {
   const hideModalViewState = () => {
     setModalViewSate(false);
     clearFormData();
+    setCurrentEditItem('')
     // getData();
     // setCurrentOrder("");
   };
 
   const onDeleteItem = (item_id) => {
-    axios
+    console.log(item_id)
+
+    var password = prompt('Please Enter your password before deleting, you cannot undo this once done')
+
+    if (password === 'admin') {
+      axios
       .delete(`api/item/delete/${item_id}`)
       .then(res => {
         console.log(res.data);
@@ -186,7 +192,11 @@ function Affiliates() {
       .catch(err => {
         console.log(err);
       });
+    } else {
+      alert('wrong credentials!')
+    }
   }
+
 
   // console.log(tableData);
   const onSubmit = e => {
@@ -251,17 +261,44 @@ function Affiliates() {
       logo: imagePreviewURL ? imagePreviewURL : logo
     };
 
-    axios.post( 
-      'https://api.imgur.com/3/image',
-      file,
-      config
-    ).then(res => {
-      console.log(res)
+    console.log(req)
+
+    if(isImageTouched) {
+      axios.post( 
+        'https://api.imgur.com/3/image',
+        file,
+        config
+      ).then(res => {
+        console.log(res)
+        const reqParam = {
+          name,
+          contact,
+          address,
+          logo: res.data.data.link
+        }
+        axios
+          .put(`api/branch/update/${branchID}`, reqParam)
+          .then(res => {
+            console.log(res.data);
+            getData();
+            setModalEditSate(false);
+            clearFormData();
+            // setTableData(res.data);
+            // setLoader(true)
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      })
+      .catch(function(err) {
+        console.log(err)
+      })
+    } else {
       const reqParam = {
         name,
         contact,
         address,
-        logo: res.data.data.link
+        logo: req.logo
       }
       axios
         .put(`api/branch/update/${branchID}`, reqParam)
@@ -276,11 +313,8 @@ function Affiliates() {
         .catch(err => {
           console.log(err);
         });
-    })
-    .catch(function(err) {
-      console.log(err)
-    })
-    console.log(req)
+    }
+    // console.log(req)
     
     //
   };
@@ -292,9 +326,11 @@ function Affiliates() {
     const config = {
       headers: { Authorization: `Bearer ${token}` }
     };   
-    const req = {
-      logo: imagePreviewURL ? imagePreviewURL : logo
-    };
+    // const req = {
+    //   logo: imagePreviewURL ? imagePreviewURL : logo
+    // };
+
+    console.log(itemFormData)
 
     axios.post( 
       'https://api.imgur.com/3/image',
@@ -320,6 +356,7 @@ function Affiliates() {
           // setModalViewSate(false);
           // setTableData(res.data);
           // setLoader(true)
+          setFile('')
         })
         .catch(err => {
           console.log(err);
@@ -335,20 +372,26 @@ function Affiliates() {
   // console.log(tableData);
   const onDelete = e => {
     e.preventDefault();
+    setModalDeleteSate(false)
+    const pass = prompt('Please Enter your password')
 
-    // return console.log(req);
-    axios
-      .delete(`api/branch/delete/${branchID}`)
-      .then(res => {
-        console.log(res.data);
-        getData();
-        setModalDeleteSate(false);
-        // setTableData(res.data);
-        // setLoader(true)
-      })
-      .catch(err => {
-        console.log(err);
-      });
+    if (pass === 'admin') {
+      // return console.log(req);
+      axios
+        .delete(`api/branch/delete/${branchID}`)
+        .then(res => {
+          console.log(res.data);
+          getData();
+          setModalDeleteSate(false);
+          // setTableData(res.data);
+          // setLoader(true)
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    } else {
+      alert('Wrong Credentials')
+    }
   };
 
   function clearFormData() {
@@ -365,9 +408,98 @@ function Affiliates() {
       logo: ''
     });
     setImagePreviewURL('')
-    setFile('')
+    setFile(null)
+    setCurrentEditItem('')
+    setEditItem(false)
+    setIsImageTouched(false)
   }
 
+  const onEditItem = (id) => {
+    setEditItem(true)
+    setCurrentEditItem(id)
+
+    console.log(id)
+
+    let data = [...itemData]
+    const filteredData = data.filter(x => x._id === id)
+
+    const { item_name, price, status, logo } = filteredData[0]
+
+    // console.log(a)
+
+    setImagePreviewURL(logo)
+    setItemFormData({
+      item_name: item_name,
+      price: price,
+      status: status
+    })
+  }
+
+  const onItemUpdate = e => {
+    e.preventDefault();
+
+    const token = 'ea30b65f2cb1bced241c333046e4137941cd0c9f'
+    const config = {
+      headers: { Authorization: `Bearer ${token}` }
+    };   
+    
+    console.log(logo)
+    console.log(imagePreviewURL)
+    // console.log(itemFormData)
+    console.log(isImageTouched)
+
+    if (isImageTouched) {
+        axios.post( 
+        'https://api.imgur.com/3/image',
+        file,
+        config
+      ).then(res => {
+        console.log(res)
+        const reqParam = {
+          name: item_name,
+          price,
+          status,
+          logo: res.data.data.link
+        }
+        axios
+          .put(`api/item/update/${currentEditItem}`, reqParam)
+          .then(res => {
+            console.log(res.data);
+            getItems(branchID);
+            setModalEditSate(false);
+            clearFormData();
+          })
+          .catch(err => {
+            console.log(err);
+          });
+      })
+      .catch(function(err) {
+        console.log(err)
+      })
+    } else {
+
+      const reqParam = {
+        name: item_name,
+        price,
+        status,
+        logo: imagePreviewURL
+      }
+
+      axios
+        .put(`api/item/update/${currentEditItem}`, reqParam)
+        .then(res => {
+          console.log(res.data);
+          getItems(branchID);
+          setModalEditSate(false);
+          clearFormData();
+        })
+        .catch(err => {
+          console.log(err);
+        });
+    }
+
+  };
+  
   const columns = [
     {
       Header: "Branch Name",
@@ -558,7 +690,7 @@ function Affiliates() {
 
 
           <hr></hr>
-          <Button color="primary mr-2" type="submit">
+          <Button className="mr-2" color="primary" type="submit">
             Save
           </Button>
           <Button color="secondary" onClick={hideModalAddState}>
@@ -666,7 +798,12 @@ function Affiliates() {
         <ModalHeader>Branch Details</ModalHeader>
         <ModalBody>
           <Form onSubmit={handleAddItemSubmit}>
-            <h1>View Branch Items</h1>
+            {
+              editItem ? 
+              <h1>Edit Item</h1>
+              :
+              <h1>View Branch Items</h1>
+            }
             <p className="text-muted">Please fill out the field</p>
 
             {imagePrevSmall}
@@ -709,8 +846,8 @@ function Affiliates() {
             <InputGroup className="mb-3">
             <Input 
               type="select" 
-              name="select" 
-              id="exampleSelect" 
+              name="status" 
+              id="status" 
               onChange={e => onItemChange(e)}>
               <option value="Available">Available</option>
               <option value="Not Available">Not Available</option>
@@ -725,95 +862,107 @@ function Affiliates() {
                 required
               /> */}
             </InputGroup>
-            <Button 
-              color="primary"  
-              type="submit">
-              Add
-            </Button>
+            {
+              editItem ? (
+                <div>
+                  <Button className="mr-2" color="success" onClick={e => onItemUpdate(e)}>
+                    Update
+                  </Button>
+                  <Button color="danger" onClick={hideModalEditState}>
+                    Cancel
+                  </Button>
+                </div>
+              )              
+              : 
+              <Button 
+                color="primary"  
+                type="submit">
+                Add
+              </Button>
+            }
           </Form>
           {/* <Button color="primary" onClick={e => onAddItem(e)}>
             Add
           </Button> */}
           <br />
           <br />
-          <div className="holder-table">
-            <Table bordered id="table">
-              <thead>
-                <tr>
-                  <th>#</th>
-                  <th>Logo</th>
-                  <th>Item Name</th>
-                  <th>Price</th>
-                  <th>Status</th>
-                  <th>Action</th>
-                </tr>
-              </thead>
-              <tbody>
-                {itemData.map(x => {
-                  // console.log(x);
+          {
+            editItem ? null :
+            <div className="holder-table">
+              <Table bordered id="table">
+                <thead>
+                  <tr>
+                    <th>#</th>
+                    <th>Logo</th>
+                    <th>Item Name</th>
+                    <th>Price</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {itemData.map(x => {
+                    // console.log(x);
 
-                  const onEditItem = () => {
-                    setReadOnlyInput(false)
-                  }
-
-                  count++;
-                  return (
-                    <tr key={x._id}>
-                      <th scope="row">{count}</th>
-                      <td><img style={{maxWidth: 30, maxHeight: 30}} src={x.logo}/></td>
-                      <td>
-                        <input 
-                        className={readOnlyInput ? 'readOnly' : ''}
-                        type="text" 
-                        value={x.item_name} 
-                        readOnly={readOnlyInput}
-                      />
-                      </td>
-                      <td>{x.price}</td>
-                      <td>{x.status}</td>
-                      <td>         
-                        <ReactTooltip id="edit" type="warning" effect="solid">
-                          <span>edit</span>
-                        </ReactTooltip>          
-                        <Button
-                          color="success"
-                          onClick={() => {
-                            onEditItem(x._id);
-                            console.log(x._id);
-                          }}
-                        >
-                          <span
-                            className="fa fa-edit"
-                            data-tip
-                            data-for="edit"
-                          />
-                        </Button>
-                        
-                        <ReactTooltip id="delete" type="warning" effect="solid">
-                          <span>delete</span>
-                        </ReactTooltip>
-                        <Button
-                          color="danger"
-                          className="ml-1"
-                          onClick={() => {
-                            onDeleteItem(x._id);
-                            console.log(x._id);
-                          }}
-                        >
-                          <span
-                            className="fa fa-trash"
-                            data-tip
-                            data-for="delete"
-                          />
-                        </Button>
-                        
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </Table>
-          </div>
+                    count++;
+                    return (
+                      <tr id={x._id} key={x._id}>
+                        <th scope="row">{count}</th>
+                        <td><img style={{maxWidth: 30, maxHeight: 30}} src={x.logo}/></td>
+                        <td>{x.item_name}</td>
+                        {/* <td>
+                          <input 
+                          className={readOnlyInput ? 'readOnly' : ''}
+                          type="text" 
+                          value={x.item_name} 
+                          readOnly={readOnlyInput}
+                        />
+                        </td> */}
+                        <td>{x.price}</td>
+                        <td>{x.status}</td>
+                        <td>         
+                          <ReactTooltip id="edit" type="warning" effect="solid">
+                            <span>edit</span>
+                          </ReactTooltip>          
+                          <Button
+                            color="success"
+                            onClick={() => {
+                              onEditItem(x._id);                              
+                            }}
+                          >
+                            <span
+                              className="fa fa-edit"
+                              data-tip
+                              data-for="edit"
+                            />
+                          </Button>
+                          
+                          <ReactTooltip id="delete" type="warning" effect="solid">
+                            <span>delete</span>
+                          </ReactTooltip>
+                          <Button
+                            color="danger"
+                            className="ml-1"
+                            onClick={() => {
+                              onDeleteItem(x._id);
+                              console.log(x._id);
+                            }}
+                          >
+                            <span
+                              className="fa fa-trash"
+                              data-tip
+                              data-for="delete"
+                            />
+                          </Button>
+                          
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </Table>
+            </div>
+          }
         </ModalBody>
         <ModalFooter>
           {/* <Button color="success" onClick={e => onUpdate(e)}>
