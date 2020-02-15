@@ -44,6 +44,8 @@ function Affiliates() {
     status: "Available",
   });
 
+  const [loading, setLoading] = useState(false)
+
   const [readOnlyInput, setReadOnlyInput] = useState(true)
 
 
@@ -101,6 +103,7 @@ function Affiliates() {
         console.log(res.data);
         setTableData(res.data);
         // setLoader(true)
+        setLoading(true)
       })
       .catch(err => {
         console.log(err);
@@ -474,18 +477,22 @@ function Affiliates() {
     <React.Fragment>
       <Button
         color="success"
+        className="mb-3"
         onClick={() => {
           handleShowAdd();
         }}
       >
         Add Branch
       </Button>
+        {console.log(loading)}
+
         {
-          tableData ? 
+          loading ? 
           <CustomTable data={tableData} columns={columns} />
           : 
           <div className="holder-loader">
-            <div class="lds-ring"><div></div><div></div><div></div><div></div></div>
+            <h2 className="text=center">Populating the data....</h2>
+            <div className="lds-ring"><div></div><div></div><div></div><div></div></div>
           </div>
         }
 
@@ -580,15 +587,20 @@ function Affiliates() {
               {
                 console.log(imagePrev)
               }
-
-              <img style={{maxHeight:150, maxWidth:150, margin:15}} src={imagePrev ? imagePrev.props.src : logo}/>
-              <Input 
-              type="file" 
-              name="file" 
-              id="exampleFile" 
-              accept="image/*"
-              required
-              onChange={ (e) => handleImageChange(e)} />
+              <div className="holder-logo">
+                <img style={{maxHeight:120, maxWidth:120}} src={imagePrev ? imagePrev.props.src : logo}/>
+                
+                <Input 
+                type="file" 
+                name="uploadFileLogo" 
+                id="uploadFileLogo" 
+                accept="image/*"
+                required
+                onChange={ (e) => handleImageChange(e)} />
+                <label htmlFor="uploadFileLogo" className="label-upload">
+                  <span className="fa fa-camera"></span>
+                </label>
+              </div>
             </>
               : ''
             }
@@ -724,82 +736,84 @@ function Affiliates() {
           </Button> */}
           <br />
           <br />
-          <Table bordered id="table">
-            <thead>
-              <tr>
-                <th>#</th>
-                <th>Logo</th>
-                <th>Item Name</th>
-                <th>Price</th>
-                <th>Status</th>
-                <th>Action</th>
-              </tr>
-            </thead>
-            <tbody>
-              {itemData.map(x => {
-                // console.log(x);
+          <div className="holder-table">
+            <Table bordered id="table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Logo</th>
+                  <th>Item Name</th>
+                  <th>Price</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody>
+                {itemData.map(x => {
+                  // console.log(x);
 
-                const onEditItem = () => {
-                  setReadOnlyInput(false)
-                }
+                  const onEditItem = () => {
+                    setReadOnlyInput(false)
+                  }
 
-                count++;
-                return (
-                  <tr key={x._id}>
-                    <th scope="row">{count}</th>
-                    <td><img style={{maxWidth: 30, maxHeight: 30}} src={x.logo}/></td>
-                    <td>
-                      <input 
-                      className={readOnlyInput ? 'readOnly' : ''}
-                      type="text" 
-                      value={x.item_name} 
-                      readOnly={readOnlyInput}
-                    />
-                    </td>
-                    <td>{x.price}</td>
-                    <td>{x.status}</td>
-                    <td>         
-                      <ReactTooltip id="edit" type="warning" effect="solid">
-                        <span>edit</span>
-                      </ReactTooltip>          
-                      <Button
-                        color="success"
-                        onClick={() => {
-                          onEditItem(x._id);
-                          console.log(x._id);
-                        }}
-                      >
-                        <span
-                          className="fa fa-edit"
-                          data-tip
-                          data-for="edit"
-                        />
-                      </Button>
-                      
-                      <ReactTooltip id="delete" type="warning" effect="solid">
-                        <span>delete</span>
-                      </ReactTooltip>
-                      <Button
-                        color="danger"
-                        className="ml-1"
-                        onClick={() => {
-                          onDeleteItem(x._id);
-                          console.log(x._id);
-                        }}
-                      >
-                        <span
-                          className="fa fa-trash"
-                          data-tip
-                          data-for="delete"
-                        />
-                      </Button>
-                      
-                    </td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </Table>
+                  count++;
+                  return (
+                    <tr key={x._id}>
+                      <th scope="row">{count}</th>
+                      <td><img style={{maxWidth: 30, maxHeight: 30}} src={x.logo}/></td>
+                      <td>
+                        <input 
+                        className={readOnlyInput ? 'readOnly' : ''}
+                        type="text" 
+                        value={x.item_name} 
+                        readOnly={readOnlyInput}
+                      />
+                      </td>
+                      <td>{x.price}</td>
+                      <td>{x.status}</td>
+                      <td>         
+                        <ReactTooltip id="edit" type="warning" effect="solid">
+                          <span>edit</span>
+                        </ReactTooltip>          
+                        <Button
+                          color="success"
+                          onClick={() => {
+                            onEditItem(x._id);
+                            console.log(x._id);
+                          }}
+                        >
+                          <span
+                            className="fa fa-edit"
+                            data-tip
+                            data-for="edit"
+                          />
+                        </Button>
+                        
+                        <ReactTooltip id="delete" type="warning" effect="solid">
+                          <span>delete</span>
+                        </ReactTooltip>
+                        <Button
+                          color="danger"
+                          className="ml-1"
+                          onClick={() => {
+                            onDeleteItem(x._id);
+                            console.log(x._id);
+                          }}
+                        >
+                          <span
+                            className="fa fa-trash"
+                            data-tip
+                            data-for="delete"
+                          />
+                        </Button>
+                        
+                      </td>
+                    </tr>
+                  );
+                })}
+              </tbody>
+            </Table>
+          </div>
         </ModalBody>
         <ModalFooter>
           {/* <Button color="success" onClick={e => onUpdate(e)}>
