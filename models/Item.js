@@ -11,6 +11,12 @@ const ItemSchema = new Schema({
   price: {
     type: String
   },
+  initialQuantity: {
+    type: String
+  },
+  isAdded: {
+    type: Boolean
+  },
   status: {
     type: String
   },

@@ -44,6 +44,8 @@ function Affiliates() {
     status: "Available",
   });
 
+  const [addingItem, setAddingItem] = useState(false)
+
   const [loading, setLoading] = useState(false)
   const [editItem, setEditItem] = useState(false)
   const [currentEditItem, setCurrentEditItem] = useState('')
@@ -322,6 +324,8 @@ function Affiliates() {
   const handleAddItemSubmit = e => {
     e.preventDefault();
 
+    setAddingItem(true)
+
     const token = 'ea30b65f2cb1bced241c333046e4137941cd0c9f'
     const config = {
       headers: { Authorization: `Bearer ${token}` }
@@ -343,6 +347,8 @@ function Affiliates() {
         item_name,
         price,
         status,
+        initialQuantity: 1,
+        isAdded: false,
         logo: res.data.data.link
       };
       // return console.log(req);
@@ -357,6 +363,7 @@ function Affiliates() {
           // setTableData(res.data);
           // setLoader(true)
           setFile('')
+          setAddingItem(false)
         })
         .catch(err => {
           console.log(err);
@@ -874,11 +881,21 @@ function Affiliates() {
                 </div>
               )              
               : 
-              <Button 
-                color="primary"  
-                type="submit">
-                Add
-              </Button>
+              <div>
+                {
+                    !addingItem ? (
+                      <Button 
+                        color="primary"  
+                        type="submit">
+                        Add
+                      </Button>
+                  ) : (
+                    <div className="holder-loader">
+                      <div className="lds-ring"><div></div><div></div><div></div><div></div></div>
+                    </div>
+                  )
+                }
+              </div>
             }
           </Form>
           {/* <Button color="primary" onClick={e => onAddItem(e)}>

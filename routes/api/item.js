@@ -29,12 +29,22 @@ router.post(
       });
     }
 
-    const { item_branch_id, item_name, price, status, logo } = req.body;
+    const { 
+      item_branch_id, 
+      item_name, 
+      price, 
+      status, 
+      logo,
+      initialQuantity,
+      isAdded
+     } = req.body;
 
     try {
       item = new Item({
         item_branch_id,
         item_name,
+        initialQuantity,
+        isAdded,
         price,
         status,
         logo,

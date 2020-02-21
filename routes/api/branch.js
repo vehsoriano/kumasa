@@ -7,6 +7,7 @@ const { check, validationResult } = require("express-validator");
 
 // Model
 const Branch = require("../../models/Branch");
+const Item = require("../../models/Item");
 
 // @route  POST api/branch
 // @desc   Register branch
