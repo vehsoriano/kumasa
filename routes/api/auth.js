@@ -66,7 +66,7 @@ async (req, res) => {
             {expiresIn: 36000},
             (err, token) => {
                 if (err, token) {
-                    res.json({token});
+                    res.json({token, user: user._id});
                 }
             }
             );
