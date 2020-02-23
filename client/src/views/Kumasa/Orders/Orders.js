@@ -63,6 +63,7 @@ function Orders() {
   const [orderData, setOrderData] = useState([]); // All User Order Data
   const [branchData, setBranchData] = useState([]); // All User Order Data
   const [items, setItems] = useState([]); // All User Order Data
+  const [loading, setLoading] = useState(false)
 
   function getOrderItems(orderId) {
     // console.log("yes");
@@ -88,6 +89,7 @@ function Orders() {
         setOrderData(res.data);
         // setCurrentOrder(res.data);
         // setLoader(true)
+        setLoading(true)
       })
       .catch(err => {
         console.log(err.response);
@@ -268,7 +270,16 @@ function Orders() {
 
   return (
     <React.Fragment>
-      <CustomTable data={orderData} columns={columns} />
+      {
+        loading ? 
+        <CustomTable data={orderData} columns={columns} />
+        : 
+        <div className="holder-loader">
+          <h2 className="text=center">Populating orders data....</h2>
+          <div className="lds-ring"><div></div><div></div><div></div><div></div></div>
+        </div>
+      }
+      
       <Modal
         isOpen={modalState}
         toggle={hideModal}
