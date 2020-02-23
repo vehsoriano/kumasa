@@ -213,6 +213,24 @@ router.get("/", async (req, res) => {
   }
 });
 
+router.put("/rider_update_status/:rider_id", async (req, res) => {
+  const { status } = req.body;
+  try {
+    const user = await User.findById(req.params.rider_id);
+    user.status = status;
+    user.save();
+    res.json({
+      data: {
+        status: "success",
+        msg: "Success"
+      }
+    });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
 // get all riders
 router.get("/riders", async (req, res) => {
   try {
@@ -250,5 +268,32 @@ router.get("/riders", async (req, res) => {
     res.status(500).send("Server error");
   }
 });
+// get all riders
+router.get("/riders/:rider_id", async (req, res) => {
+  try {
+    const rider = await RiderProfile.findOne({
+      rider_user_id: req.params.rider_id
+    });
+
+    res.json(rider);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
+// // testing
+// router.post("/test", async (req, res) => {
+//   try {
+//     const { test } = req.body;
+//     for (let index = 0; index < test.length; index++) {
+//       console.log(index);
+//     }
+//     console.log(test);
+//   } catch (err) {
+//     console.error(err.message);
+//     res.status(500).send("Server error");
+//   }
+// });
 
 module.exports = router;

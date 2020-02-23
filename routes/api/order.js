@@ -12,18 +12,23 @@ const Item = require("../../models/Item");
 // @access Public
 router.post(
   "/:user_id",
-  [
-    check("order_item_id", "OrderItem ID is required")
-      .not()
-      .isEmpty()
-  ],
+  // [
+  //   check("order_item_id", "OrderItem ID is required")
+  //     .not()
+  //     .isEmpty()
+  // ],
   async (req, res) => {
-    const errors = validationResult(req);
-    if (!errors.isEmpty()) {
-      return res.status(400).json({ errors: errors.array() });
-    }
+    // const errors = validationResult(req);
+    // if (!errors.isEmpty()) {
+    //   return res.status(400).json({ errors: errors.array() });
+    // }
 
-    const { order_item_id, qty } = req.body;
+    const { items } = req.body;
+    // console.log(items);
+
+    // items.map(item => {
+    //   console.log(item.item_1.item_id);
+    // })
 
     try {
       // save Order first
@@ -34,19 +39,20 @@ router.post(
       });
       await newOrder.save();
 
-      // save Order Item
-      const item = await Item.findById(order_item_id);
-      const totalAmount = item.price * qty;
-      newOrderItem = new OrderItem({
-        order_item_order_id: newOrder._id,
-        order_item_id,
-        qty,
-        total: totalAmount
-      });
-
-      await newOrderItem.save();
-
-      res.json(newOrderItem);
+      for (let index = 0; index < items.length; index++) {
+        console.log(items[index].order_item_id);
+        // save Order Item
+        const item = await Item.findById(items[index].order_item_id);
+        const totalAmount = item.price * items[index].qty;
+        newOrderItem = new OrderItem({
+          order_item_order_id: newOrder._id,
+          order_item_id: items[index].order_item_id,
+          qty: items[index].qty,
+          total: totalAmount
+        });
+        await newOrderItem.save();
+      }
+      res.json({data:{status:"success", msg: "order saved"}});
     } catch (err) {
       console.error(err.message);
       res.status(500).send("Server error");
@@ -78,7 +84,7 @@ router.get("/orders", async (req, res) => {
     const data = [];
     const orders = await Order.find();
 
-    console.log(orders)
+    console.log(orders);
 
     for (let index = 0; index < orders.length; index++) {
       const user = await User.findById(orders[index].order_user_id);

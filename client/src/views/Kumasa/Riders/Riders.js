@@ -28,7 +28,7 @@ function Riders() {
   const [modalDeleteState, setModalDeleteSate] = useState(false);
   const [modalAddState, setModalAddSate] = useState(false);
   const [tableData, setTableData] = useState([]);
-  const [userID, setUserID] = useState('');
+  const [userID, setUserID] = useState("");
   const [formData, setFormData] = useState({
     first_name: "",
     middle_name: "",
@@ -73,7 +73,7 @@ function Riders() {
   useEffect(() => {
     getData();
   }, []);
-  
+
   const handleShowAdd = () => {
     setModalAddSate(true);
   };
@@ -225,7 +225,7 @@ function Riders() {
       accessor: d => d.status.toString(),
       Cell: status => (
         <div className="active-holder">
-          {status.original.status == "online" ? (
+          {status.original.status ? (
             <span className="table-status-active">Online</span>
           ) : (
             <span className="table-status-inactive">Offline</span>
@@ -274,7 +274,7 @@ function Riders() {
                   province,
                   age
                 } = datas[row.index];
-            
+
                 setUserID(id);
                 setFormData({
                   first_name,
@@ -303,9 +303,7 @@ function Riders() {
               onClick={() => {
                 handleShowDelete();
                 let datas = [...tableData];
-                const {
-                  id
-                } = datas[row.index];
+                const { id } = datas[row.index];
                 setUserID(id);
               }}
             >
