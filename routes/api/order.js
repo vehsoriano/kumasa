@@ -23,7 +23,7 @@ router.post(
     //   return res.status(400).json({ errors: errors.array() });
     // }
 
-    const { items } = req.body;
+    const { items, address, city } = req.body;
     // console.log(items);
 
     // items.map(item => {
@@ -35,7 +35,9 @@ router.post(
       const orderCount = await OrderItem.find();
       newOrder = new Order({
         order_user_id: req.params.user_id,
-        order_id: "KUMASA_ORDER" + orderCount.length + 1
+        order_id: "KUMASA_ORDER" + orderCount.length + 1,
+        address: address,
+        city: city
       });
       await newOrder.save();
 
@@ -52,7 +54,7 @@ router.post(
         });
         await newOrderItem.save();
       }
-      res.json({data:{status:"success", msg: "order saved"}});
+      res.json({ data: { status: "success", msg: "order saved" } });
     } catch (err) {
       console.error(err.message);
       res.status(500).send("Server error");
@@ -91,7 +93,7 @@ router.get("/orders", async (req, res) => {
 
       // console.log(user)
 
-      var order_total = "";
+      var order_total = 0;
 
       const order_items = await OrderItem.find({
         order_item_order_id: orders[index]._id
@@ -101,7 +103,8 @@ router.get("/orders", async (req, res) => {
       // return console.log(order_items);
       var item_order_id = "";
       order_items.map(item => {
-        order_total = order_total + item.total;
+        order_total = "" + (parseInt(order_total) + parseInt(item.total));
+        // console.log();
         item_order_id = item.order_item_id;
       });
 
@@ -118,6 +121,8 @@ router.get("/orders", async (req, res) => {
         order_address: branch.address,
         status: orders[index].status,
         order_date: orders[index].created_at,
+        order_address: orders[index].address,
+        order_city: orders[index].city,
 
         first_name: user.first_name,
         last_name: user.last_name,
@@ -162,6 +167,22 @@ router.get("/ordersItem/:order_id", async (req, res) => {
 
     // console.log(user);
     res.json(data);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+
+// accept order
+router.put("/accept/:rider_id", async (req, res) => {
+  const { order_id } = req.body;
+  try {
+    const order = await Order.findById(order_id);
+    order.rider_id = req.params.rider_id;
+    order.status = "On Process";
+    order.save();
+    // return console.log(order);
+    res.json({ data: { status: "success", msg: "order accepted" } });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");
