@@ -6,6 +6,7 @@ const { check, validationResult } = require("express-validator");
 const Order = require("../../models/Order");
 const OrderItem = require("../../models/OrderItem");
 const Item = require("../../models/Item");
+const Wallet = require("../../models/Wallet");
 
 // @route  POST api/order
 // @desc   Register order
@@ -32,29 +33,41 @@ router.post(
 
     try {
       // save Order first
+      const delivery_fee = "50";
       const orderCount = await OrderItem.find();
       newOrder = new Order({
         order_user_id: req.params.user_id,
         order_id: "KUMASA_ORDER" + orderCount.length + 1,
         address: address,
-        city: city
+        city: city,
+        delivery_fee: delivery_fee
       });
       await newOrder.save();
 
+      let order_total = 0;
       for (let index = 0; index < items.length; index++) {
         console.log(items[index].order_item_id);
         // save Order Item
         const item = await Item.findById(items[index].order_item_id);
-        const totalAmount = item.price * items[index].qty;
+        const totalAmount = parseInt(item.price) * parseInt(items[index].qty);
         newOrderItem = new OrderItem({
           order_item_order_id: newOrder._id,
           order_item_id: items[index].order_item_id,
+          item_price: item.price,
           qty: items[index].qty,
           total: totalAmount
         });
         await newOrderItem.save();
+
+        order_total = order_total + totalAmount;
       }
-      res.json({ data: { status: "success", msg: "order saved" } });
+      newOrder.order_total = order_total;
+      await newOrder.save();
+      res.json({
+        data: { status: "success", msg: "order saved" },
+        newOrder,
+        newOrderItem
+      });
     } catch (err) {
       console.error(err.message);
       res.status(500).send("Server error");
@@ -122,7 +135,7 @@ router.get("/orders", async (req, res) => {
         order_date: orders[index].created_at,
         order_address: orders[index].address,
         order_city: orders[index].city,
-
+        delivery_fee: orders[index].delivery_fee,
         first_name: user.first_name,
         last_name: user.last_name,
         phone_number: user.phone_number,
@@ -173,15 +186,27 @@ router.get("/ordersItem/:order_id", async (req, res) => {
 });
 
 // accept order
-router.put("/accept/:rider_id", async (req, res) => {
-  const { order_id } = req.body;
+router.put("/proccess/:rider_id", async (req, res) => {
+  const { order_id, status } = req.body;
   try {
     const order = await Order.findById(order_id);
     order.rider_id = req.params.rider_id;
-    order.status = "On Process";
+    order.status = status;
     order.save();
-    // return console.log(order);
-    res.json({ data: { status: "success", msg: "order accepted" } });
+
+    // check if status Delivered
+    if (status == "Delivered") {
+      const wallet = await Wallet.findOne({ rider_id: req.params.rider_id });
+      const currentSpent = wallet.total_spend;
+      wallet.total_spend = parseInt(currentSpent) + parseInt(order.order_total);
+      const currentEarned = wallet.total_earned;
+      wallet.total_earned =
+        parseInt(currentEarned) + parseInt(order.delivery_fee);
+      wallet.save();
+      console.log(currentEarned);
+    }
+
+    res.json({ data: { status: "success", msg: "order " + status }, order });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");

@@ -17,6 +17,12 @@ const OrderSchema = new Schema({
   city: {
     type: String
   },
+  delivery_fee: {
+    type: String
+  },
+  order_total: {
+    type: String
+  },
   status: {
     type: String,
     default: "Pending"

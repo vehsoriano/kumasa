@@ -225,7 +225,7 @@ function Riders() {
       accessor: d => d.status.toString(),
       Cell: status => (
         <div className="active-holder">
-          {status.original.status ? (
+          {status.original.status == "Online" ? (
             <span className="table-status-active">Online</span>
           ) : (
             <span className="table-status-inactive">Offline</span>

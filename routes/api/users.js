@@ -98,6 +98,14 @@ router.post(
           status: "offline"
         });
         await rider.save();
+
+        // create an empty wallet
+        wallet = new Wallet({
+          rider_id: user._id,
+          total_spend: "0",
+          total_earned: "0"
+        });
+        await wallet.save();
       }
 
       // return jsonwebtoken
@@ -216,9 +224,11 @@ router.get("/", async (req, res) => {
 router.put("/rider_update_status/:rider_id", async (req, res) => {
   const { status } = req.body;
   try {
-    const user = await User.findById(req.params.rider_id);
-    user.status = status;
-    user.save();
+    const riderProfile = await RidersProfile.findOne({
+      rider_user_id: req.params.rider_id
+    });
+    riderProfile.status = status;
+    riderProfile.save();
     res.json({
       data: {
         status: "success",
@@ -268,14 +278,15 @@ router.get("/riders", async (req, res) => {
     res.status(500).send("Server error");
   }
 });
-// get all riders
+// get riders profile
 router.get("/riders/:rider_id", async (req, res) => {
   try {
     const rider = await RiderProfile.findOne({
       rider_user_id: req.params.rider_id
     });
+    const wallet = await Wallet.findOne({ rider_id: req.params.rider_id });
 
-    res.json(rider);
+    res.json({ rider, wallet });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");

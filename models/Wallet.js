@@ -1,20 +1,14 @@
 const mongoose = require("mongoose");
 const Schema = mongoose.Schema;
 
-const OrderItemSchema = new Schema({
-  order_item_order_id: {
+const WalletSchema = new Schema({
+  rider_id: {
     type: String
   },
-  order_item_id: {
+  total_spend: {
     type: String
   },
-  item_price: {
-    type: String
-  },
-  qty: {
-    type: String
-  },
-  total: {
+  total_earned: {
     type: String
   },
   created_at: {
@@ -27,4 +21,4 @@ const OrderItemSchema = new Schema({
   }
 });
 
-module.exports = OrderItem = mongoose.model("order_item", OrderItemSchema);
+module.exports = Wallet = mongoose.model("wallet", WalletSchema);
