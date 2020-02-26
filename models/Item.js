@@ -23,6 +23,9 @@ const ItemSchema = new Schema({
   status: {
     type: String
   },
+  recommended: {
+    type: String
+  },
   logo: {
     type: String
   },

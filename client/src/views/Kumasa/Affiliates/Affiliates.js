@@ -354,23 +354,23 @@ function Affiliates() {
         // isDeleted: false,
         logo: res.data.data.link
       };
-      // return console.log(req);
-      axios
-        .post(`api/item`, req)
-        .then(res => {
-          console.log(res.data);
-          getData();
-          getItems(branchID);
-          clearFormData();
-          // setModalViewSate(false);
-          // setTableData(res.data);
-          // setLoader(true)
-          setFile('')
-          setAddingItem(false)
-        })
-        .catch(err => {
-          console.log(err);
-        });
+      console.log(req);
+      // axios
+      //   .post(`api/item`, req)
+      //   .then(res => {
+      //     console.log(res.data);
+      //     getData();
+      //     getItems(branchID);
+      //     clearFormData();
+      //     // setModalViewSate(false);
+      //     // setTableData(res.data);
+      //     // setLoader(true)
+      //     setFile('')
+      //     setAddingItem(false)
+      //   })
+      //   .catch(err => {
+      //     console.log(err);
+      //   });
     })
     .catch(err => {
       console.log(err)
