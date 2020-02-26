@@ -415,7 +415,7 @@ function Affiliates() {
       item_name: "",
       price: "",
       status: "Available",
-      recommended: "No",
+      recommended: "Yes",
       logo: ''
     });
     setImagePreviewURL('')
@@ -497,6 +497,7 @@ function Affiliates() {
         name: item_name,
         price,
         status,
+        recommended,
         logo: imagePreviewURL
       }
 
