@@ -125,6 +125,17 @@ router.get("/orders", async (req, res) => {
 
       const branch = await Branch.findById(item.item_branch_id);
 
+      // get rider info if order is accepted
+      let rider_info = {};
+      if (
+        orders[index].status == "Accepted" ||
+        orders[index].status == "Delivered" ||
+        orders[index].status == "Rejected"
+      ) {
+        rider_info = await User.findById(orders[index].rider_id);
+        console.log(rider_info);
+      }
+
       data.push({
         order_id: orders[index]._id,
         order_number: orders[index].order_id,
@@ -143,9 +154,105 @@ router.get("/orders", async (req, res) => {
         email: user.email,
         address: user.address,
         city: user.city,
-        province: user.province
+        province: user.province,
+
+        rider_id: orders[index].rider_id,
+        rider_first_name: rider_info.first_name,
+        rider_middle_name: rider_info.middle_name,
+        rider_last_name: rider_info.last_name,
+        rider_phone_number: rider_info.phone_number,
+        rider_email: rider_info.email,
+        rider_address: rider_info.rider_address
       });
-      console.log(data);
+      // console.log(data);
+    }
+
+    // console.log(user);
+    res.json(data);
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send("Server error");
+  }
+});
+// get all orders
+router.get("/orders/:rider_id", async (req, res) => {
+  try {
+    // order id from orders
+    // name from users
+    // phone from users
+    // email rom users
+    // order total from order items
+    // status from order
+
+    const data = [];
+    const orders = await Order.find({ rider_id: req.params.rider_id });
+
+    console.log(orders);
+
+    for (let index = 0; index < orders.length; index++) {
+      const user = await User.findById(orders[index].order_user_id);
+
+      // console.log(user)
+
+      var order_total = 0;
+
+      const order_items = await OrderItem.find({
+        order_item_order_id: orders[index]._id
+      });
+      // return console.log(order_items);
+
+      // return console.log(order_items);
+      var item_order_id = "";
+      order_items.map(item => {
+        order_total = "" + (parseInt(order_total) + parseInt(item.total));
+        // console.log();
+        item_order_id = item.order_item_id;
+      });
+
+      const item = await Item.findById(item_order_id);
+
+      const branch = await Branch.findById(item.item_branch_id);
+
+      // get rider info if order is accepted
+      let rider_info = {};
+      if (
+        orders[index].status == "Accepted" ||
+        orders[index].status == "Delivered" ||
+        orders[index].status == "Rejected"
+      ) {
+        rider_info = await User.findById(orders[index].rider_id);
+        console.log(rider_info);
+      }
+
+      data.push({
+        order_id: orders[index]._id,
+        order_number: orders[index].order_id,
+        order_total: order_total,
+        branch_logo: branch.logo,
+        order_branch: branch.name,
+        order_address: branch.address,
+        status: orders[index].status,
+        order_date: orders[index].created_at,
+        order_address: orders[index].address,
+        order_city: orders[index].city,
+        delivery_fee: orders[index].delivery_fee,
+        first_name: user.first_name,
+        last_name: user.last_name,
+        phone_number: user.phone_number,
+        email: user.email,
+        address: user.address,
+        city: user.city,
+        province: user.province,
+
+        rider_id: orders[index].rider_id,
+        rider_first_name: rider_info.first_name,
+        rider_middle_name: rider_info.middle_name,
+        rider_last_name: rider_info.last_name,
+        rider_phone_number: rider_info.phone_number,
+        rider_email: rider_info.email,
+        rider_address: rider_info.rider_address
+      });
+      // console.log(data);
     }
 
     // console.log(user);
@@ -172,7 +279,7 @@ router.get("/ordersItem/:order_id", async (req, res) => {
         logo: itemData.logo,
         item_name: itemData.item_name,
         qty: orders_item[index].qty,
-        price: itemData.price,
+        price: orders_item[index].item_price,
         total: orders_item[index].total
       });
       console.log(data);
