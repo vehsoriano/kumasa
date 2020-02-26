@@ -675,7 +675,7 @@ function Affiliates() {
             </InputGroup>
             <InputGroup className="mb-3">
               <Input
-                type="text"
+                type="number"
                 placeholder="Contact"
                 autoComplete="contact"
                 name="contact"
@@ -811,7 +811,7 @@ function Affiliates() {
               editItem ? 
               <h1>Edit Item</h1>
               :
-              <h1>View Branch Items</h1>
+              <h1>View/Add Branch Items</h1>
             }
             <p className="text-muted">Please fill out the field</p>
 
@@ -843,7 +843,7 @@ function Affiliates() {
             </InputGroup>
             <InputGroup className="mb-3">
               <Input
-                type="text"
+                type="number"
                 placeholder="Price"
                 autoComplete="price"
                 name="price"

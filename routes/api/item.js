@@ -46,6 +46,7 @@ router.post(
         initialQuantity,
         isAdded,
         price,
+        isDeleted,
         status,
         logo,
       });
@@ -132,7 +133,7 @@ router.put("/delete/:item_id", async (req, res) => {
     // });
   } catch (err) {
     console.error(err.message);
-    res.status(500).send("Server error");
+    res.status(500).send("Server error cannot archived");
   }
 });
 
