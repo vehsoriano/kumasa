@@ -42,6 +42,7 @@ function Affiliates() {
     item_name: "",
     price: "",
     status: "Available",
+    recommended: "Yes"
   });
 
   const [addingItem, setAddingItem] = useState(false)
@@ -88,7 +89,7 @@ function Affiliates() {
 
 
   const { name, contact, address, logo } = formData;
-  const { item_name, price, status } = itemFormData;
+  const { item_name, price, status, recommended } = itemFormData;
 
   const onChange = e =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -349,7 +350,8 @@ function Affiliates() {
         status,
         initialQuantity: 1,
         isAdded: false,
-        isDeleted: false,
+        recommended,
+        // isDeleted: false,
         logo: res.data.data.link
       };
       // return console.log(req);
@@ -413,6 +415,7 @@ function Affiliates() {
       item_name: "",
       price: "",
       status: "Available",
+      recommended: "No",
       logo: ''
     });
     setImagePreviewURL('')
@@ -431,7 +434,7 @@ function Affiliates() {
     let data = [...itemData]
     const filteredData = data.filter(x => x._id === id)
 
-    const { item_name, price, status, logo } = filteredData[0]
+    const { item_name, price, status, logo, recommended } = filteredData[0]
 
     // console.log(a)
 
@@ -439,7 +442,8 @@ function Affiliates() {
     setItemFormData({
       item_name: item_name,
       price: price,
-      status: status
+      status: status,
+      recommended: recommended,
     })
   }
 
@@ -467,6 +471,7 @@ function Affiliates() {
           name: item_name,
           price,
           status,
+          recommended,
           logo: res.data.data.link
         }
         axios
@@ -479,10 +484,12 @@ function Affiliates() {
           })
           .catch(err => {
             console.log(err);
+            alert('An error occured')
           });
       })
       .catch(function(err) {
         console.log(err)
+        alert('An error occured')
       })
     } else {
 
@@ -861,6 +868,15 @@ function Affiliates() {
               <option value="Available">Available</option>
               <option value="Not Available">Not Available</option>
             </Input>
+            <Input 
+              type="select" 
+              name="recommended" 
+              id="recommended" 
+              value={recommended}
+              onChange={e => onItemChange(e)}>
+              <option value="Yes">Recommended</option>
+              <option value="No">Not Recommended</option>
+            </Input>
               {/* <Input
                 type="text"
                 placeholder="Status"
@@ -916,6 +932,7 @@ function Affiliates() {
                     <th>Item Name</th>
                     <th>Price</th>
                     <th>Status</th>
+                    <th>Recommended</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -939,6 +956,7 @@ function Affiliates() {
                         </td> */}
                         <td>{x.price}</td>
                         <td>{x.status}</td>
+                        <td>{x.recommended}</td>
                         <td>         
                           <ReactTooltip id="edit" type="warning" effect="solid">
                             <span>edit</span>
