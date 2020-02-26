@@ -131,6 +131,7 @@ router.get("/orders", async (req, res) => {
         order_total: order_total,
         branch_logo: branch.logo,
         order_branch: branch.name,
+        order_address: branch.address,
         status: orders[index].status,
         order_date: orders[index].created_at,
         order_address: orders[index].address,

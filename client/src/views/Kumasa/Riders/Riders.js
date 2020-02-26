@@ -24,6 +24,7 @@ import {
 } from "reactstrap";
 
 function Riders() {
+  const [loading, setLoading] = useState(false);
   const [modalEditState, setModalEditSate] = useState(false);
   const [modalDeleteState, setModalDeleteSate] = useState(false);
   const [modalAddState, setModalAddSate] = useState(false);
@@ -64,7 +65,7 @@ function Riders() {
       .then(res => {
         console.log(res.data);
         setTableData(res.data);
-        // setLoader(true)
+        setLoading(true);
       })
       .catch(err => {
         console.log(err);
@@ -328,13 +329,26 @@ function Riders() {
     <React.Fragment>
       <Button
         color="success"
+        className="mb-3"
         onClick={() => {
           handleShowAdd();
         }}
       >
         Add Rider
       </Button>
-      <Table data={tableData} columns={columns} />
+      {loading ? (
+        <Table data={tableData} columns={columns} />
+      ) : (
+        <div className="holder-loader">
+          <h2 className="text=center">Populating riders data....</h2>
+          <div className="lds-ring">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
+        </div>
+      )}
       {/* for modal Add */}
       <Modal
         isOpen={modalAddState}

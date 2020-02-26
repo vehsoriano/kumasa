@@ -630,7 +630,7 @@ function Affiliates() {
           <CustomTable data={tableData} columns={columns} />
           : 
           <div className="holder-loader">
-            <h2 className="text=center">Populating the data....</h2>
+            <h2 className="text=center">Populating affiliates data....</h2>
             <div className="lds-ring"><div></div><div></div><div></div><div></div></div>
           </div>
         }
@@ -855,6 +855,7 @@ function Affiliates() {
               type="select" 
               name="status" 
               id="status" 
+              value={status}
               onChange={e => onItemChange(e)}>
               <option value="Available">Available</option>
               <option value="Not Available">Not Available</option>
