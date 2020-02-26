@@ -467,7 +467,6 @@ function Affiliates() {
           name: item_name,
           price,
           status,
-          isDeleted: false,
           logo: res.data.data.link
         }
         axios
