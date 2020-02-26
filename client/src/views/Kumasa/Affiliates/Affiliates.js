@@ -975,7 +975,7 @@ function Affiliates() {
                             />
                           </Button>
                           
-                          <ReactTooltip id="delete" type="warning" effect="solid">
+                          {/* <ReactTooltip id="delete" type="warning" effect="solid">
                             <span>delete</span>
                           </ReactTooltip>
                           <Button
@@ -991,7 +991,7 @@ function Affiliates() {
                               data-tip
                               data-for="delete"
                             />
-                          </Button>
+                          </Button> */}
                           
                         </td>
                       </tr>

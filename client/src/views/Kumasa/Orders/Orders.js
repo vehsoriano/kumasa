@@ -59,6 +59,7 @@ import {
 
 function Orders() {
   const [modalState, setModalState] = useState(false);
+  const [modalTrack, setModalTrack] = useState(false);
   const [currentOrder, setCurrentOrder] = useState([]); // ID for current view
   const [orderData, setOrderData] = useState([]); // All User Order Data
   const [branchData, setBranchData] = useState([]); // All User Order Data
@@ -135,6 +136,14 @@ function Orders() {
     // setCurrentOrder("");
   };
 
+  const viewTrack = () => {
+    setModalTrack(true);
+  };
+
+  const hideModalTrack = () => {
+    setModalTrack(false);
+  }
+
   const columns = [
     {
       Header: "Order Number",
@@ -155,7 +164,8 @@ function Orders() {
     },
     {
       Header: "Order Total",
-      accessor: "order_total"
+      id: "orderTotal",
+      accessor: row => `${parseInt(row.order_total) + parseInt(row.delivery_fee)}`
     },
     {
       Header: "Status",
@@ -169,7 +179,9 @@ function Orders() {
       Cell: row => (
         <div className="button-wrapper">
           <div className="button-holder">
-            <button className="btn-icon" onClick={() => {}}>
+            <button className="btn-icon" onClick={() => {
+              viewTrack()
+            }}>
               <span className="icon-holder">
                 <span className="icon-location-pin" data-tip data-for="edit" />
               </span>
@@ -253,9 +265,11 @@ function Orders() {
   //   }
   // ];
 
+  console.log(currentOrder)
+
   const {
     order_number,
-    order_total,
+    // order_total,
     order_branch,
     first_name,
     last_name,
@@ -264,9 +278,11 @@ function Orders() {
     address,
     city,
     province,
-    order_date
+    order_date,
+    order_address
   } = currentOrder;
   var totalAmount = 0;
+  
 
   return (
     <React.Fragment>
@@ -279,7 +295,31 @@ function Orders() {
           <div className="lds-ring"><div></div><div></div><div></div><div></div></div>
         </div>
       }
-      
+      <Modal
+        isOpen={modalTrack}
+        toggle={hideModalTrack}
+        className="modals modal-success"
+      >
+        <ModalHeader>Track Details</ModalHeader>
+        <ModalBody>
+          <h4>Rider Details</h4>
+          <hr />
+          <div className="holder-details">
+            <div className="holder-key">Rider ID:</div>
+            {/* <div className="holder-value"></div> */}
+          </div>
+          <div className="holder-details">
+            <div className="holder-key">Rider Contact #:</div>
+            {/* <div className="holder-value"></div> */}
+          </div>
+        </ModalBody>
+        <ModalFooter>
+          <Button color="secondary" onClick={hideModalTrack}>
+            Close
+          </Button>
+        </ModalFooter>
+      </Modal>
+
       <Modal
         isOpen={modalState}
         toggle={hideModal}
@@ -307,6 +347,16 @@ function Orders() {
               {address + " " + city + " " + province}
             </div>
           </div>
+          {
+            order_address ? (
+              <div className="holder-details">
+                <div className="holder-key">Delivery Address:</div>
+                <div className="holder-value">
+                  {order_address}
+                </div>
+              </div>
+            ) : (null)
+          }         
 
           <br />
           <h4>Branch Details</h4>
@@ -381,11 +431,23 @@ function Orders() {
               })}
             </tbody>
             <tfoot>
+                <tr>
+                <th id="total" colSpan="5">
+                  Subtotal :
+                </th>
+                <td>{totalAmount}</td>
+              </tr>
+              <tr>
+                <th id="total" colSpan="5">
+                  Delivery Fee :
+                </th>
+                <td>{59}</td>
+              </tr>
               <tr>
                 <th id="total" colSpan="5">
                   Total :
                 </th>
-                <td>{totalAmount}</td>
+                <td>{totalAmount + 59}.00</td>
               </tr>
             </tfoot>
           </Table>
