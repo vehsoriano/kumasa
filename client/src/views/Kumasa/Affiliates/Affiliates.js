@@ -349,6 +349,7 @@ function Affiliates() {
         status,
         initialQuantity: 1,
         isAdded: false,
+        isDeleted: false,
         logo: res.data.data.link
       };
       // return console.log(req);
@@ -466,6 +467,7 @@ function Affiliates() {
           name: item_name,
           price,
           status,
+          isDeleted: false,
           logo: res.data.data.link
         }
         axios

@@ -88,13 +88,14 @@ router.get("/branch/:branch_id", async (req, res) => {
 });
 
 router.put("/update/:item_id", async (req, res) => {
-  const { name, price, status, logo } = req.body;
+  const { name, price, status, logo, isDeleted } = req.body;
   try {
     const item = await Item.findById(req.params.item_id);
     item.item_name = name;
     item.price = price;
     item.status = status;
     item.logo = logo;
+    item.isDeleted = isDeleted
     item.save();
     res.json({
       data: {
@@ -109,16 +110,26 @@ router.put("/update/:item_id", async (req, res) => {
   }
 });
 
-router.delete("/delete/:item_id", async (req, res) => {
+router.put("/delete/:item_id", async (req, res) => {
   try {
-    await Item.deleteOne({ _id: req.params.item_id }).then(response => {
-      return res.json({
-        data: {
-          status: "success",
-          msg: "Item Successfully Deleted"
-        }
-      });
-    });
+    const item = await Item.findById(req.params.item_id);
+    item.isDeleted = true
+    console.log(item)
+    return res.json({
+      data: {
+        status: 'success',
+        msg: "Item Archived"
+      },
+      item
+    })
+    // await Item.deleteOne({ _id: req.params.item_id }).then(response => {
+    //   return res.json({
+    //     data: {
+    //       status: "success",
+    //       msg: "Item Successfully Deleted"
+    //     }
+    //   });
+    // });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");
