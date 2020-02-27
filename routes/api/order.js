@@ -101,7 +101,7 @@ router.get("/orders", async (req, res) => {
     const data = [];
     const orders = await Order.find();
 
-    console.log(orders);
+    // console.log(orders);
 
     for (let index = 0; index < orders.length; index++) {
       const user = await User.findById(orders[index].order_user_id);
@@ -135,7 +135,7 @@ router.get("/orders", async (req, res) => {
         orders[index].status == "Rejected"
       ) {
         rider_info = await User.findById(orders[index].rider_id);
-        // console.log(rider_info);
+        console.log(rider_info);
       }
       const riderProfile = await RidersProfile.findOne({
         rider_user_id: rider_info._id
@@ -163,7 +163,7 @@ router.get("/orders", async (req, res) => {
         province: user.province,
 
         rider_id: orders[index].rider_id,
-        rider_code: riderProfile.rider_id,
+        // rider_code: riderProfile.rider_user_id,
         rider_first_name: rider_info.first_name,
         rider_middle_name: rider_info.middle_name,
         rider_last_name: rider_info.last_name,
@@ -252,7 +252,6 @@ router.get("/orders/:rider_id", async (req, res) => {
         province: user.province,
 
         rider_id: orders[index].rider_id,
-        rider_kumasa_id: rider_info.rider_id,
         rider_first_name: rider_info.first_name,
         rider_middle_name: rider_info.middle_name,
         rider_last_name: rider_info.last_name,

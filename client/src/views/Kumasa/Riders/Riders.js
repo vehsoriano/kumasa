@@ -63,6 +63,7 @@ function Riders() {
     axios
       .get("api/users/riders")
       .then(res => {
+        console.log('riders')
         console.log(res.data);
         setTableData(res.data);
         setLoading(true);

@@ -301,8 +301,9 @@ function Orders() {
     rider_phone_number,
     rider_email,
     status,
-    rider_kumasa_id
   } = currentOrderRider
+
+  console.log(rider_code)
 
   return (
     <React.Fragment>
@@ -340,11 +341,11 @@ function Orders() {
               </div>
             </div>
           {
-            rider_id ? (
+            !rider_id ? (
               <>                
                 <div className="holder-details">
                   <div className="holder-key">Rider ID:</div>
-                  <div className="holder-value">{rider_code}</div>
+                  <div className="holder-value">{rider_id}</div>
                 </div>
                 <div className="holder-details">
                   <div className="holder-key">Rider Name:</div>
