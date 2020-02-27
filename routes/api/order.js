@@ -157,6 +157,7 @@ router.get("/orders", async (req, res) => {
         province: user.province,
 
         rider_id: orders[index].rider_id,
+        rider_kumasa_id: rider_info.rider_id,
         rider_first_name: rider_info.first_name,
         rider_middle_name: rider_info.middle_name,
         rider_last_name: rider_info.last_name,
@@ -245,6 +246,7 @@ router.get("/orders/:rider_id", async (req, res) => {
         province: user.province,
 
         rider_id: orders[index].rider_id,
+        rider_kumasa_id: rider_info.rider_id,
         rider_first_name: rider_info.first_name,
         rider_middle_name: rider_info.middle_name,
         rider_last_name: rider_info.last_name,

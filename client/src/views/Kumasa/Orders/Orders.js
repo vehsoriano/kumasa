@@ -61,6 +61,7 @@ function Orders() {
   const [modalState, setModalState] = useState(false);
   const [modalTrack, setModalTrack] = useState(false);
   const [currentOrder, setCurrentOrder] = useState([]); // ID for current view
+  const [currentOrderRider, setCurrentOrderRider] = useState('') // ID for current Rider
   const [orderData, setOrderData] = useState([]); // All User Order Data
   const [branchData, setBranchData] = useState([]); // All User Order Data
   const [items, setItems] = useState([]); // All User Order Data
@@ -98,11 +99,12 @@ function Orders() {
   }
 
   function getBranchData() {
-    // console.log("yes");
+    console.log("yes");
     axios
       .get("api/branch")
       .then(res => {
-        // console.log(res.data)
+        console.log('------------------------------------------')
+        console.log(res.data)
         setBranchData(res.data);
 
         // setLoader(true)
@@ -181,6 +183,11 @@ function Orders() {
           <div className="button-holder">
             <button className="btn-icon" onClick={() => {
               viewTrack()
+
+              let datas = [...orderData];
+              console.log({ USERS: datas[row.index] });
+
+              setCurrentOrderRider(datas[row.index]);
             }}>
               <span className="icon-holder">
                 <span className="icon-location-pin" data-tip data-for="edit" />
@@ -284,6 +291,16 @@ function Orders() {
   var totalAmount = 0;
   
 
+  const {
+    rider_id,
+    rider_first_name,
+    rider_last_name,
+    rider_phone_number,
+    rider_email,
+    status,
+    rider_kumasa_id
+  } = currentOrderRider
+
   return (
     <React.Fragment>
       {
@@ -303,15 +320,42 @@ function Orders() {
         <ModalHeader>Track Details</ModalHeader>
         <ModalBody>
           <h4>Rider Details</h4>
-          <hr />
-          <div className="holder-details">
-            <div className="holder-key">Rider ID:</div>
-            {/* <div className="holder-value"></div> */}
-          </div>
-          <div className="holder-details">
-            <div className="holder-key">Rider Contact #:</div>
-            {/* <div className="holder-value"></div> */}
-          </div>
+            <hr />
+            <div className="holder-details">
+              <div className="holder-key">Delivery Status:</div>
+              <div className="holder-value">
+                {
+                  status === 'Accepted' ? <h5 style={{color: 'yellowgreen'}}>{status}</h5> :
+                  status === "Pending" ? <h5 style={{color: 'orange'}}>{status}</h5> :
+                  status === "Delivered" ? <h5 style={{color: 'green'}}>{status}</h5> :
+                  status === "Rejected" ? <h5 style={{color: 'red'}}>{status}</h5> : null
+                }
+              </div>
+            </div>
+          {
+            rider_id ? (
+              <>                
+                <div className="holder-details">
+                  <div className="holder-key">Rider ID:</div>
+                  <div className="holder-value">{rider_kumasa_id}</div>
+                </div>
+                <div className="holder-details">
+                  <div className="holder-key">Rider Name:</div>
+                  <div className="holder-value">{rider_last_name}, {rider_first_name}</div>
+                </div>
+                <div className="holder-details">
+                  <div className="holder-key">Rider Contact #:</div>
+                  <div className="holder-value">{rider_phone_number}</div>
+                </div>          
+                <div className="holder-details">
+                  <div className="holder-key">Rider Email:</div>
+                  <div className="holder-value">{rider_email}</div>
+                </div>
+              </>
+            ) : (
+              null
+            )
+          }
         </ModalBody>
         <ModalFooter>
           <Button color="secondary" onClick={hideModalTrack}>
