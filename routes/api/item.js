@@ -36,7 +36,8 @@ router.post(
       status, 
       logo,
       initialQuantity,
-      isAdded
+      isAdded,
+      recommended
      } = req.body;
 
     try {
@@ -47,6 +48,7 @@ router.post(
         isAdded,
         price,
         status,
+        recommended,
         logo,
       });
 
@@ -88,13 +90,14 @@ router.get("/branch/:branch_id", async (req, res) => {
 });
 
 router.put("/update/:item_id", async (req, res) => {
-  const { name, price, status, logo } = req.body;
+  const { name, price, status, logo, recommended } = req.body;
   try {
     const item = await Item.findById(req.params.item_id);
     item.item_name = name;
     item.price = price;
     item.status = status;
     item.logo = logo;
+    item.recommended = recommended;
     item.save();
     res.json({
       data: {

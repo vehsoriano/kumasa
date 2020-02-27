@@ -17,7 +17,13 @@ const ItemSchema = new Schema({
   isAdded: {
     type: Boolean
   },
+  isDeleted: {
+    type: Boolean
+  },
   status: {
+    type: String
+  },
+  recommended: {
     type: String
   },
   logo: {

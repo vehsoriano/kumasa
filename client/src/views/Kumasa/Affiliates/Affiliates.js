@@ -42,6 +42,7 @@ function Affiliates() {
     item_name: "",
     price: "",
     status: "Available",
+    recommended: "Yes"
   });
 
   const [addingItem, setAddingItem] = useState(false)
@@ -88,7 +89,7 @@ function Affiliates() {
 
 
   const { name, contact, address, logo } = formData;
-  const { item_name, price, status } = itemFormData;
+  const { item_name, price, status, recommended } = itemFormData;
 
   const onChange = e =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -349,9 +350,11 @@ function Affiliates() {
         status,
         initialQuantity: 1,
         isAdded: false,
+        recommended,
+        // isDeleted: false,
         logo: res.data.data.link
       };
-      // return console.log(req);
+      // console.log(req);
       axios
         .post(`api/item`, req)
         .then(res => {
@@ -412,6 +415,7 @@ function Affiliates() {
       item_name: "",
       price: "",
       status: "Available",
+      recommended: "Yes",
       logo: ''
     });
     setImagePreviewURL('')
@@ -430,7 +434,7 @@ function Affiliates() {
     let data = [...itemData]
     const filteredData = data.filter(x => x._id === id)
 
-    const { item_name, price, status, logo } = filteredData[0]
+    const { item_name, price, status, logo, recommended } = filteredData[0]
 
     // console.log(a)
 
@@ -438,7 +442,8 @@ function Affiliates() {
     setItemFormData({
       item_name: item_name,
       price: price,
-      status: status
+      status: status,
+      recommended: recommended,
     })
   }
 
@@ -466,6 +471,7 @@ function Affiliates() {
           name: item_name,
           price,
           status,
+          recommended,
           logo: res.data.data.link
         }
         axios
@@ -478,10 +484,12 @@ function Affiliates() {
           })
           .catch(err => {
             console.log(err);
+            alert('An error occured')
           });
       })
       .catch(function(err) {
         console.log(err)
+        alert('An error occured')
       })
     } else {
 
@@ -489,6 +497,7 @@ function Affiliates() {
         name: item_name,
         price,
         status,
+        recommended,
         logo: imagePreviewURL
       }
 
@@ -673,7 +682,7 @@ function Affiliates() {
             </InputGroup>
             <InputGroup className="mb-3">
               <Input
-                type="text"
+                type="number"
                 placeholder="Contact"
                 autoComplete="contact"
                 name="contact"
@@ -809,7 +818,7 @@ function Affiliates() {
               editItem ? 
               <h1>Edit Item</h1>
               :
-              <h1>View Branch Items</h1>
+              <h1>View/Add Branch Items</h1>
             }
             <p className="text-muted">Please fill out the field</p>
 
@@ -841,7 +850,7 @@ function Affiliates() {
             </InputGroup>
             <InputGroup className="mb-3">
               <Input
-                type="text"
+                type="number"
                 placeholder="Price"
                 autoComplete="price"
                 name="price"
@@ -859,6 +868,15 @@ function Affiliates() {
               onChange={e => onItemChange(e)}>
               <option value="Available">Available</option>
               <option value="Not Available">Not Available</option>
+            </Input>
+            <Input 
+              type="select" 
+              name="recommended" 
+              id="recommended" 
+              value={recommended}
+              onChange={e => onItemChange(e)}>
+              <option value="Yes">Recommended</option>
+              <option value="No">Not Recommended</option>
             </Input>
               {/* <Input
                 type="text"
@@ -915,6 +933,7 @@ function Affiliates() {
                     <th>Item Name</th>
                     <th>Price</th>
                     <th>Status</th>
+                    <th>Recommended</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -938,6 +957,7 @@ function Affiliates() {
                         </td> */}
                         <td>{x.price}</td>
                         <td>{x.status}</td>
+                        <td>{x.recommended}</td>
                         <td>         
                           <ReactTooltip id="edit" type="warning" effect="solid">
                             <span>edit</span>
@@ -955,7 +975,7 @@ function Affiliates() {
                             />
                           </Button>
                           
-                          <ReactTooltip id="delete" type="warning" effect="solid">
+                          {/* <ReactTooltip id="delete" type="warning" effect="solid">
                             <span>delete</span>
                           </ReactTooltip>
                           <Button
@@ -971,7 +991,7 @@ function Affiliates() {
                               data-tip
                               data-for="delete"
                             />
-                          </Button>
+                          </Button> */}
                           
                         </td>
                       </tr>
