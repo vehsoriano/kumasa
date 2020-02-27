@@ -341,7 +341,7 @@ function Orders() {
               </div>
             </div>
           {
-            !rider_id ? (
+            rider_id ? (
               <>                
                 <div className="holder-details">
                   <div className="holder-key">Rider ID:</div>
@@ -366,7 +366,6 @@ function Orders() {
           }
         </ModalBody>
         <ModalFooter>
-          x
           <Button color="secondary" onClick={hideModalTrack}>
             Close
           </Button>
