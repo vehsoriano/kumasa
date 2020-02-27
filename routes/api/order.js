@@ -7,6 +7,8 @@ const Order = require("../../models/Order");
 const OrderItem = require("../../models/OrderItem");
 const Item = require("../../models/Item");
 const Wallet = require("../../models/Wallet");
+const RidersProfile = require("../../models/RidersProfile");
+
 
 // @route  POST api/order
 // @desc   Register order
@@ -133,8 +135,12 @@ router.get("/orders", async (req, res) => {
         orders[index].status == "Rejected"
       ) {
         rider_info = await User.findById(orders[index].rider_id);
-        console.log(rider_info);
+        // console.log(rider_info);
       }
+      const riderProfile = await RidersProfile.findOne({
+        rider_user_id: rider_info._id
+      });
+      console.log(riderProfile);
 
       data.push({
         order_id: orders[index]._id,
@@ -157,7 +163,7 @@ router.get("/orders", async (req, res) => {
         province: user.province,
 
         rider_id: orders[index].rider_id,
-        rider_kumasa_id: rider_info.rider_id,
+        rider_code: riderProfile.rider_id,
         rider_first_name: rider_info.first_name,
         rider_middle_name: rider_info.middle_name,
         rider_last_name: rider_info.last_name,

@@ -65,7 +65,7 @@ function Orders() {
   const [orderData, setOrderData] = useState([]); // All User Order Data
   const [branchData, setBranchData] = useState([]); // All User Order Data
   const [items, setItems] = useState([]); // All User Order Data
-  const [loading, setLoading] = useState(false)
+  const [loading, setLoading] = useState(false);
 
   function getOrderItems(orderId) {
     // console.log("yes");
@@ -87,11 +87,11 @@ function Orders() {
     axios
       .get("api/order/orders")
       .then(res => {
-        console.log(res.data)
+        console.log(res.data);
         setOrderData(res.data);
         // setCurrentOrder(res.data);
         // setLoader(true)
-        setLoading(true)
+        setLoading(true);
       })
       .catch(err => {
         console.log(err.response);
@@ -114,8 +114,6 @@ function Orders() {
       });
   }
 
-  
-
   useEffect(() => {
     getData();
     getBranchData();
@@ -129,7 +127,6 @@ function Orders() {
 
   const handleViewOrder = () => {
     setModalState(true);
-
   };
 
   const hideModal = () => {
@@ -144,7 +141,7 @@ function Orders() {
 
   const hideModalTrack = () => {
     setModalTrack(false);
-  }
+  };
 
   const columns = [
     {
@@ -167,7 +164,8 @@ function Orders() {
     {
       Header: "Order Total",
       id: "orderTotal",
-      accessor: row => `${parseInt(row.order_total) + parseInt(row.delivery_fee)}`
+      accessor: row =>
+        `${parseInt(row.order_total) + parseInt(row.delivery_fee)}`
     },
     {
       Header: "Status",
@@ -272,7 +270,7 @@ function Orders() {
   //   }
   // ];
 
-  console.log(currentOrder)
+  console.log(currentOrder);
 
   const {
     order_number,
@@ -286,13 +284,18 @@ function Orders() {
     city,
     province,
     order_date,
-    order_address
+    order_address,
+
+    // rider_first_name,
+    // rider_last_name,
+    // rider_code,
+    // rider_phone_number
   } = currentOrder;
   var totalAmount = 0;
-  
 
   const {
     rider_id,
+    rider_code,
     rider_first_name,
     rider_last_name,
     rider_phone_number,
@@ -303,15 +306,19 @@ function Orders() {
 
   return (
     <React.Fragment>
-      {
-        loading ? 
+      {loading ? (
         <CustomTable data={orderData} columns={columns} />
-        : 
+      ) : (
         <div className="holder-loader">
           <h2 className="text=center">Populating orders data....</h2>
-          <div className="lds-ring"><div></div><div></div><div></div><div></div></div>
+          <div className="lds-ring">
+            <div></div>
+            <div></div>
+            <div></div>
+            <div></div>
+          </div>
         </div>
-      }
+      )}
       <Modal
         isOpen={modalTrack}
         toggle={hideModalTrack}
@@ -337,7 +344,7 @@ function Orders() {
               <>                
                 <div className="holder-details">
                   <div className="holder-key">Rider ID:</div>
-                  <div className="holder-value">{rider_kumasa_id}</div>
+                  <div className="holder-value">{rider_code}</div>
                 </div>
                 <div className="holder-details">
                   <div className="holder-key">Rider Name:</div>
@@ -358,6 +365,7 @@ function Orders() {
           }
         </ModalBody>
         <ModalFooter>
+          x
           <Button color="secondary" onClick={hideModalTrack}>
             Close
           </Button>
@@ -391,16 +399,12 @@ function Orders() {
               {address + " " + city + " " + province}
             </div>
           </div>
-          {
-            order_address ? (
-              <div className="holder-details">
-                <div className="holder-key">Delivery Address:</div>
-                <div className="holder-value">
-                  {order_address}
-                </div>
-              </div>
-            ) : (null)
-          }         
+          {order_address ? (
+            <div className="holder-details">
+              <div className="holder-key">Delivery Address:</div>
+              <div className="holder-value">{order_address}</div>
+            </div>
+          ) : null}
 
           <br />
           <h4>Branch Details</h4>
@@ -411,13 +415,16 @@ function Orders() {
             .map(x => {
               return (
                 <div key={x.name}>
-                  {
-                    x.logo ? (
-                      <div style={{marginBottom: '5px'}}>
-                        <img style={{maxWidth: 75, maxHeight: 75}} src={x.logo}/>
-                      </div>
-                    ) : ''
-                  }
+                  {x.logo ? (
+                    <div style={{ marginBottom: "5px" }}>
+                      <img
+                        style={{ maxWidth: 75, maxHeight: 75 }}
+                        src={x.logo}
+                      />
+                    </div>
+                  ) : (
+                    ""
+                  )}
                   <div className="holder-details">
                     <div className="holder-key">Name:</div>
                     <div className="holder-value">{x.name}</div>
@@ -465,7 +472,12 @@ function Orders() {
                 return (
                   <tr key={x.id}>
                     <th scope="row">{x.id}</th>
-                    <td><img style={{maxWidth: 30, maxHeight: 30}} src={x.logo}/></td>
+                    <td>
+                      <img
+                        style={{ maxWidth: 30, maxHeight: 30 }}
+                        src={x.logo}
+                      />
+                    </td>
                     <td>{x.item_name}</td>
                     <td>{x.qty}</td>
                     <td>{x.price}</td>
@@ -475,7 +487,7 @@ function Orders() {
               })}
             </tbody>
             <tfoot>
-                <tr>
+              <tr>
                 <th id="total" colSpan="5">
                   Subtotal :
                 </th>
