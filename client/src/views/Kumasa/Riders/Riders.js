@@ -30,6 +30,9 @@ function Riders() {
   const [modalAddState, setModalAddSate] = useState(false);
   const [tableData, setTableData] = useState([]);
   const [userID, setUserID] = useState("");
+
+  const [time, setTime] = useState(Date.now());
+
   const [formData, setFormData] = useState({
     first_name: "",
     middle_name: "",
@@ -58,12 +61,13 @@ function Riders() {
 
   const onChange = e =>
     setFormData({ ...formData, [e.target.name]: e.target.value });
+
   function getData() {
     // console.log("yes");
     axios
       .get("api/users/riders")
       .then(res => {
-        console.log('riders')
+        console.log("riders");
         console.log(res.data);
         setTableData(res.data);
         setLoading(true);
@@ -74,6 +78,7 @@ function Riders() {
   }
   useEffect(() => {
     getData();
+    setInterval(getData, 5000); // runs every 5 seconds.
   }, []);
 
   const handleShowAdd = () => {
