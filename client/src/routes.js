@@ -22,8 +22,8 @@ const Modals = React.lazy(() => import('./views/Notifications/Modals'));
 const routes = [
   // { path: '/', exact: true, name: 'Home' },
   { path: '/dashboard', name: 'Dashboard', component: Dashboard },  
-  { path: '/users', exact: true,  name: 'Riders', component: Users },
-  { path: '/users/:id', exact: true, name: 'Rider Details', component: User },
+  { path: '/users', exact: true,  name: 'Users', component: Users },
+  { path: '/users/:id', exact: true, name: 'User Details', component: User },
   // { path: '/kumasa', exact: true, name: 'Kumasa', component: Orders },
   { path: '/kumasa/orders', name: 'Orders', component: Orders },
   { path: '/kumasa/riders', name: 'Manage Riders', component: Riders },
