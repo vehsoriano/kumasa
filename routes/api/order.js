@@ -153,7 +153,11 @@ router.get("/orders", async (req, res) => {
         branch_order_address: branch.address,
         status: orders[index].status,
         order_date: orders[index].created_at,
+
         order_address: orders[index].address,
+        order_request: orders[index].otherRequest,
+        order_reservation_time: orders[index].reservationTime,
+
         order_city: orders[index].city,
         delivery_fee: orders[index].delivery_fee,
         first_name: user.first_name,
