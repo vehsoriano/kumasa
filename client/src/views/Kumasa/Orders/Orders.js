@@ -285,7 +285,8 @@ function Orders() {
     province,
     order_date,
     order_address,
-
+    order_reservation_time,
+    order_request,
     // rider_first_name,
     // rider_last_name,
     // rider_code,
@@ -403,6 +404,20 @@ function Orders() {
             <div className="holder-details">
               <div className="holder-key">Delivery Address:</div>
               <div className="holder-value">{order_address}</div>
+            </div>
+          ) : null}
+
+          {order_request ? (
+            <div className="holder-details">
+              <div className="holder-key">Other Request:</div>
+              <div className="holder-value">{order_request}</div>
+            </div>
+          ) : null}
+
+          {order_reservation_time ? (
+            <div className="holder-details">
+              <div className="holder-key">Delivery Time:</div>
+              <div className="holder-value">{order_reservation_time}</div>
             </div>
           ) : null}
 
