@@ -26,7 +26,7 @@ router.post(
     //   return res.status(400).json({ errors: errors.array() });
     // }
 
-    const { items, address, city } = req.body;
+    const { items, address, city,  otherRequest, reservationTime} = req.body;
     // console.log(items);
 
     // items.map(item => {
@@ -42,6 +42,8 @@ router.post(
         order_id: "KUMASA_ORDER" + orderCount.length + 1,
         address: address,
         city: city,
+        otherRequest: otherRequest,
+        reservationTime: reservationTime,
         delivery_fee: delivery_fee
       });
       await newOrder.save();
