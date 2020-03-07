@@ -285,7 +285,8 @@ router.get("/ordersItem/:order_id", async (req, res) => {
     const orders_item = await OrderItem.find({
       order_item_order_id: req.params.order_id
     });
-    // console.log(orders_item)
+    const order = await Order.findById(req.params.order_id);
+    console.log(order);
     for (let index = 0; index < orders_item.length; index++) {
       const itemData = await Item.findById(orders_item[index].order_item_id);
 
@@ -297,11 +298,11 @@ router.get("/ordersItem/:order_id", async (req, res) => {
         price: orders_item[index].item_price,
         total: orders_item[index].total
       });
-      console.log(data);
+      // console.log(data);
     }
 
-    // console.log(user);
-    res.json(data);
+    console.log(data);
+    res.json({ data, order });
   } catch (err) {
     console.error(err.message);
     res.status(500).send("Server error");
