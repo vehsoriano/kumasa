@@ -9,7 +9,6 @@ const Item = require("../../models/Item");
 const Wallet = require("../../models/Wallet");
 const RidersProfile = require("../../models/RidersProfile");
 
-
 // @route  POST api/order
 // @desc   Register order
 // @access Public
@@ -26,7 +25,7 @@ router.post(
     //   return res.status(400).json({ errors: errors.array() });
     // }
 
-    const { items, address, city,  otherRequest, reservationTime} = req.body;
+    const { items, address, city, otherRequest, reservationTime } = req.body;
     // console.log(items);
 
     // items.map(item => {
@@ -256,6 +255,9 @@ router.get("/orders/:rider_id", async (req, res) => {
         address: user.address,
         city: user.city,
         province: user.province,
+
+        otherRequest: orders[index].otherRequest,
+        reservationTime: orders[index].reservationTime,
 
         rider_id: orders[index].rider_id,
         rider_first_name: rider_info.first_name,
